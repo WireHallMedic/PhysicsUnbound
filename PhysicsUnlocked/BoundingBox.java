@@ -42,12 +42,12 @@ public class BoundingBox extends MovingBoundingObject
    // as the center point is used for logic, we need some small calculations for drawing
    public double getDrawOriginX()
    {
-      return loc.x - halfSize.x;
+      return getLoc().x - getHalfSize().x;
    }
    
    public double getDrawOriginY()
    {
-      return loc.y - halfSize.y;
+      return getLoc().y - getHalfSize().y;
    }
    
    
@@ -56,20 +56,20 @@ public class BoundingBox extends MovingBoundingObject
       if(that instanceof BoundingBox)
       {
          BoundingBox thatBox = (BoundingBox)that;
-         return this.loc.x - this.halfSize.x < thatBox.loc.x + thatBox.halfSize.x &&
-                this.loc.x + this.halfSize.x > thatBox.loc.x - thatBox.halfSize.x &&
-                this.loc.y - this.halfSize.y < thatBox.loc.y + thatBox.halfSize.y &&
-                this.loc.y + this.halfSize.y > thatBox.loc.y - thatBox.halfSize.y;
+         return this.getLoc().x - this.getHalfSize().x < thatBox.getLoc().x + thatBox.getHalfSize().x &&
+                this.getLoc().x + this.getHalfSize().x > thatBox.getLoc().x - thatBox.getHalfSize().x &&
+                this.getLoc().y - this.getHalfSize().y < thatBox.getLoc().y + thatBox.getHalfSize().y &&
+                this.getLoc().y + this.getHalfSize().y > thatBox.getLoc().y - thatBox.getHalfSize().y;
       }
       return false;
    }
    
    public boolean pointIsIn(double x, double y)
    {
-      return loc.x - halfSize.x <= x &&
-             loc.x + halfSize.x > x &&
-             loc.y - halfSize.y <= y &&
-             loc.y + halfSize.y > y;
+      return getLoc().x - getHalfSize().x <= x &&
+             getLoc().x + getHalfSize().x > x &&
+             getLoc().y - getHalfSize().y <= y &&
+             getLoc().y + getHalfSize().y > y;
    }
    
    public boolean pointIsIn(DoublePair point)
