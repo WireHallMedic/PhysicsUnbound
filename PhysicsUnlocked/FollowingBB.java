@@ -14,15 +14,24 @@ public class FollowingBB extends BoundingBox
 
 
 	public MovingBoundingObject getLeader(){return leader;}
+	public double getRelativeXLoc(){return super.getXLoc();}
+	public double getRelativeYLoc(){return super.getYLoc();}
+   public DoublePair getRelativeLoc(){return super.getLoc();}
 
 
 	public void setLeader(MovingBoundingObject l){leader = l;}
+	public void setRelativeXLoc(double x){super.setXLoc(x);}
+	public void setRelativeYLoc(double y){super.setYLoc(y);}
+   public void setRelativeLoc(double x, double y){super.setLoc(x, y);}
+   public void setRelativeLoc(DoublePair l){super.setLoc(l.x, l.y);}
 
 
    public FollowingBB(double w, double h, MovingBoundingObject l)
    {
       super(w, h);
       leader = l;
+      setAffectedByGravity(false);
+	   setPushedByGeometry(false);
    }
    
    @Override
@@ -40,6 +49,30 @@ public class FollowingBB extends BoundingBox
    @Override
    public DoublePair getLoc()
    {
-      return DoublePair.sum(getLoc(), leader.getLoc());
+      return DoublePair.sum(getRelativeLoc(), leader.getLoc());
+   }
+   
+   @Override
+	public void setXLoc(double x)
+   {
+      setRelativeXLoc(x - leader.getXLoc());
+   }
+   
+   @Override
+	public void setYLoc(double y)
+   {
+      setRelativeYLoc(y - leader.getYLoc());
+   }
+   
+   @Override
+   public void setLoc(double x, double y)
+   {
+      setRelativeLoc(new DoublePair(x, y));
+   }
+   
+   @Override
+   public void setLoc(DoublePair p)
+   {
+      setRelativeLoc(DoublePair.difference(p, leader.getLoc()));
    }
 }
