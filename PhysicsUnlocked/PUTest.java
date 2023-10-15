@@ -11,16 +11,14 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private BoundingBox box;
    private BoundingBox[] bouncingBox;
    private BoundingBox launchBox;
-   private FollowingBB shield;
+   private FollowingBB shield1;
+   private FollowingBB shield2;
    private int tileSizePixels = 25;
    private int timeCounter;
    private double gravity = 20.0;
    private double terminalVelocity = 15;
    private double jump = -12.0;
    private double walkSpeed = 10.0;
-   private double maxRotatingSpeed = 5.0;
-   private int shieldYDirection = 1;
-   private int shieldXDirection = 1;
    private int collisionIndicationCounter = 0;
    private MovingBoundingObject lastHitBox = null;
    
@@ -40,7 +38,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       box.setXMaxSpeed(walkSpeed);
       engine.add(box, PhysicsUnlockedEngine.PLAYER);
       
-      bouncingBox = new BoundingBox[5];
+      bouncingBox = new BoundingBox[100];
       for(int i = 0; i < bouncingBox.length; i++)
       {
          bouncingBox[i] = new BoundingBox(.75, .75);
@@ -72,9 +70,14 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       launchBox.addCollisionListener(this);
       engine.add(launchBox, PhysicsUnlockedEngine.ENVIRONMENT);
       
-      shield = new FollowingBB(.25, .25, box);
-      shield.setLoc(0.0, -1.0);
-      engine.add(shield, PhysicsUnlockedEngine.ENVIRONMENT);
+      shield1 = new FollowingBB(.25, .25, box);
+      shield1.setLoc(0.0, -1.0);
+      shield1.addCollisionListener(this);
+      engine.add(shield1, PhysicsUnlockedEngine.ENVIRONMENT);
+      shield2 = new FollowingBB(.25, .25, box);
+      shield2.setLoc(0.0, 1.0);
+      shield2.addCollisionListener(this);
+      engine.add(shield2, PhysicsUnlockedEngine.ENVIRONMENT);
       
       if(!topDown)
       {
@@ -140,21 +143,13 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       if(timeCounter > 59)
       {
          timeCounter = 0;
-         shieldYDirection *= -1;
       }
-      if(timeCounter == 30)
-         shieldXDirection *= -1;
          
       // set shield location
-      double yIncriment = timeCounter / 30.0;
-      if(timeCounter > 29)
-         yIncriment = 1.0 - ((timeCounter - 30) / 30.0);
-      shield.setRelativeYLoc(shieldYDirection * yIncriment);
-      int shiftedTimeCounter = (timeCounter + 30) % 60;
-      double xIncriment = shiftedTimeCounter / 30.0;
-      if(shiftedTimeCounter > 29)
-         xIncriment = 1.0 - ((shiftedTimeCounter - 30) / 30.0);
-      shield.setRelativeXLoc(shieldXDirection * xIncriment);
+      double rotation = (timeCounter % 30) / 30.0;
+      double angle = DoublePair.FULL_CIRCLE - (DoublePair.FULL_CIRCLE * rotation);
+      shield1.setRelativeLoc(DoublePair.getFromAngle(angle));
+      shield2.setRelativeLoc(DoublePair.getFromAngle(DoublePair.simplifyAngle(angle + DoublePair.HALF_CIRCLE)));
       
       if(collisionIndicationCounter > 0)
          collisionIndicationCounter--;
@@ -238,10 +233,16 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       g2d.drawRect(x, y, width, height);
       
       // shield
-      x = (int)(shield.getDrawOriginX() * tileSizePixels);
-      y = (int)(shield.getDrawOriginY() * tileSizePixels);
-      width = (int)(shield.getWidth() * tileSizePixels);
-      height = (int)(shield.getHeight() * tileSizePixels);
+      x = (int)(shield1.getDrawOriginX() * tileSizePixels);
+      y = (int)(shield1.getDrawOriginY() * tileSizePixels);
+      width = (int)(shield1.getWidth() * tileSizePixels);
+      height = (int)(shield1.getHeight() * tileSizePixels);
+      g2d.setColor(Color.ORANGE);
+      g2d.fillRect(x, y, width, height);
+      g2d.setColor(Color.BLACK);
+      g2d.drawRect(x, y, width, height);
+      x = (int)(shield2.getDrawOriginX() * tileSizePixels);
+      y = (int)(shield2.getDrawOriginY() * tileSizePixels);
       g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
       g2d.setColor(Color.BLACK);
@@ -291,6 +292,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    public void movingCollisionOccured(MovingCollision mc)
    {
       MovingBoundingObject obj = mc.getSource();
+      MovingBoundingObject subj = mc.getMovingBoundingObject();
       
       // bouncing boxes
       DoublePair normalPair = engine.getOrthoGeometryCollisionNormals(obj);
@@ -298,16 +300,36 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
          obj.setXSpeed(Math.abs(obj.getXSpeed()) * normalPair.x);
       if(normalPair.y != 0.0)
          obj.setYSpeed(Math.abs(obj.getYSpeed()) * normalPair.y);
-      if(mc.getMovingBoundingObject() == box)
+      if(subj == box)
       {
          collisionIndicationCounter = 10;
          lastHitBox = obj;
       }
       
       // launch box
-      if(obj == launchBox && mc.getMovingBoundingObject() == box)
+      if(obj == launchBox && subj == box)
       {
          box.setYSpeed(-20.0);
+      }
+      
+      // shields
+      if(obj == shield1 || obj == shield2)
+      {
+         if(subj != null)
+         {
+            double xDist = Math.abs(obj.getXLoc() - subj.getXLoc());
+            double yDist = Math.abs(obj.getYLoc() - subj.getYLoc());
+            
+            if(obj.getYLoc() - subj.getYLoc() < 0.0)  // subject is below
+               subj.setYSpeed(Math.abs(subj.getYSpeed()));
+            else  // subject is above
+               subj.setYSpeed(Math.abs(subj.getYSpeed()) * -1);
+               
+            if(obj.getXLoc() - subj.getXLoc() < 0.0)  // subject is right
+               subj.setXSpeed(Math.abs(subj.getXSpeed()));
+            else  // subject is left
+               subj.setXSpeed(Math.abs(subj.getXSpeed()) * -1);
+         }
       }
    }
    
