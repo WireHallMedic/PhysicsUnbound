@@ -25,6 +25,12 @@ public class DoublePair
       this(that.x, that.y);
    }
    
+   public void add(DoublePair that)
+   {
+      this.x += that.x;
+      this.y += that.y;
+   }
+   
    public String serialize()
    {
       return String.format("[%1.3f, %1.3f]", x, y);
@@ -34,5 +40,13 @@ public class DoublePair
    public String toString()
    {
       return serialize();
+   }
+   
+   
+   public static DoublePair sum(DoublePair a, DoublePair b)
+   {
+      DoublePair dp = new DoublePair(a);
+      a.add(b);
+      return a;
    }
 }
