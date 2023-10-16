@@ -107,12 +107,12 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
       double baseYLoc = getYLoc() - getHalfHeight();
       double xOrigin = Math.min(baseXLoc, baseXLoc + (getXSpeed() * seconds));
       double yOrigin = Math.min(baseYLoc, baseYLoc + (getYSpeed() * seconds));
+      int[] returnArr = {(int)xOrigin, (int)yOrigin};
       // because the direction of truncating reverses as you traverse zero
       if(xOrigin < 0.0)
-         xOrigin -= 1.0;
+         returnArr[0]--;
       if(yOrigin < 0.0)
-         yOrigin -= 1.0;
-      int[] returnArr = {(int)xOrigin, (int)yOrigin};
+         returnArr[1]--;
       return returnArr;
    }
    
@@ -123,12 +123,12 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
       double baseYLoc = getYLoc() + getHalfHeight();
       double xOrigin = Math.max(baseXLoc, baseXLoc + (getXSpeed() * seconds));
       double yOrigin = Math.max(baseYLoc, baseYLoc + (getYSpeed() * seconds));
+      int[] returnArr = {(int)xOrigin, (int)yOrigin};
       // because the direction of truncating reverses as you traverse zero
       if(xOrigin < 0.0)
-         xOrigin -= 1.0;
+         returnArr[0]--;
       if(yOrigin < 0.0)
-         yOrigin -= 1.0;
-      int[] returnArr = {(int)xOrigin, (int)yOrigin};
+         returnArr[1]--;
       return returnArr;
    }
    

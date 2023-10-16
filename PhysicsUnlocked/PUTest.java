@@ -27,7 +27,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private boolean rightHeld;
    private boolean upHeld;
    private boolean downHeld;
-   private boolean topDown = true;
+   private boolean topDown = false;
    
 
    public PUTest()
@@ -39,7 +39,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       box.setXMaxSpeed(walkSpeed);
       engine.add(box, PhysicsUnlockedEngine.PLAYER);
       
-      bouncingBox = new BoundingBox[1];
+      bouncingBox = new BoundingBox[100];
       for(int i = 0; i < bouncingBox.length; i++)
       {
          bouncingBox[i] = new BoundingBox(.75, .75);

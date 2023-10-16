@@ -368,16 +368,19 @@ public class PhysicsUnlockedEngine implements Runnable
    }
    
    // returns a pair of normals, checking one tile up, down, left, right
+   // probably not great for sizes > 1.0
    public DoublePair getOrthoGeometryCollisionNormals(MovingBoundingObject obj)
    {
+      int xLocInt = (int)obj.getXLoc();
+      int yLocInt = (int)obj.getYLoc();
       DoublePair bump = new DoublePair(0.0, 0.0);
-      if(collisionCheckGeometry((int)obj.getXLoc(), (int)(obj.getYLoc() - obj.getHalfHeight()), obj, 0.0, -0.01))
+      if(collisionCheckGeometry(xLocInt, yLocInt - 1, obj, 0.0, -0.01))
          bump.y = 1.0;
-      if(collisionCheckGeometry((int)obj.getXLoc(), (int)(obj.getYLoc() + obj.getHalfHeight()), obj, 0.0, 0.01))
+      if(collisionCheckGeometry(xLocInt, yLocInt + 1, obj, 0.0, 0.01))
          bump.y = -1.0;
-      if(collisionCheckGeometry((int)(obj.getXLoc() - obj.getHalfWidth()), (int)obj.getYLoc(), obj, -0.01, 0.0))
+      if(collisionCheckGeometry(xLocInt - 1, yLocInt, obj, -0.01, 0.0))
          bump.x = 1.0;
-      if(collisionCheckGeometry((int)(obj.getXLoc() + obj.getHalfWidth()), (int)obj.getYLoc(), obj, 0.01, 0.0))
+      if(collisionCheckGeometry(xLocInt + 1, yLocInt, obj, 0.01, 0.0))
          bump.x = -1.0;
       return bump;
    }
@@ -385,12 +388,10 @@ public class PhysicsUnlockedEngine implements Runnable
    // is overlapping with any geometry?
    public boolean isCollidingWithGeometry(MovingBoundingObject obj)
    {
-      int startX = (int)(obj.getXLoc() - obj.getHalfWidth());
-      int endX = (int)(obj.getXLoc() + obj.getHalfWidth());
-      int startY = (int)(obj.getYLoc() - obj.getHalfHeight());
-      int endY = (int)(obj.getYLoc() + obj.getHalfHeight());
-      for(int xBlock = startX; xBlock <= endX; xBlock++)
-      for(int yBlock = startY; yBlock <= endY; yBlock++)
+      int[] start = obj.getPotentialCollisionOrigin(0.0);
+      int[] end = obj.getPotentialCollisionEnd(0.0);
+      for(int xBlock = start[0]; xBlock <= end[0]; xBlock++)
+      for(int yBlock = start[1]; yBlock <= end[1]; yBlock++)
       {
          if(collisionCheckGeometry(xBlock, yBlock, obj, 0.0, 0.0))
             return true;
