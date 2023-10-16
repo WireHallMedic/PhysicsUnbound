@@ -39,7 +39,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       box.setXMaxSpeed(walkSpeed);
       engine.add(box, PhysicsUnlockedEngine.PLAYER);
       
-      bouncingBox = new BoundingBox[100];
+      bouncingBox = new BoundingBox[10];
       for(int i = 0; i < bouncingBox.length; i++)
       {
          bouncingBox[i] = new BoundingBox(.75, .75);
@@ -183,12 +183,12 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       int[] geoColCheckEnd = box.getPotentialCollisionEnd(.01);
       g2d.setColor(Color.GRAY);
       int checked = 0;
-      for(int x = geoColCheckOrigin[0]; x <= geoColCheckEnd[0]; x++)
-      for(int y = geoColCheckOrigin[1]; y <= geoColCheckEnd[1]; y++)
-      {
-         checked++;
-         g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
-      }
+   //    for(int x = geoColCheckOrigin[0]; x <= geoColCheckEnd[0]; x++)
+//       for(int y = geoColCheckOrigin[1]; y <= geoColCheckEnd[1]; y++)
+//       {
+//          checked++;
+//          g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
+//       }
       
       // grid
       g2d.setColor(Color.CYAN);
@@ -234,7 +234,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
             g2d.setColor(Color.GREEN);
          g2d.fillRect(x, y, width, height);
          g2d.setColor(Color.BLACK);
-         g2d.drawRect(x, y, width, height);
+    //     g2d.drawRect(x, y, width, height);
       }
       
       // launch box
@@ -245,7 +245,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       g2d.setColor(Color.YELLOW);
       g2d.fillRect(x, y, width, height);
       g2d.setColor(Color.BLACK);
-      g2d.drawRect(x, y, width, height);
+   //   g2d.drawRect(x, y, width, height);
       
       // shield
       x = (int)(shield1.getDrawOriginX() * tileSizePixels) + inset;
@@ -261,7 +261,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
       g2d.setColor(Color.BLACK);
-      g2d.drawRect(x, y, width, height);
+  //    g2d.drawRect(x, y, width, height);
       
       // player last to be in front
       x = (int)(box.getDrawOriginX() * tileSizePixels) + inset;
@@ -274,7 +274,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
          g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
       g2d.setColor(Color.BLACK);
-      g2d.drawRect(x, y, width, height);
+  //    g2d.drawRect(x, y, width, height);
       
    }
    

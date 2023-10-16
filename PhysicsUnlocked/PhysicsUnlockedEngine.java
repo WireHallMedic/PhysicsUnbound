@@ -305,14 +305,28 @@ public class PhysicsUnlockedEngine implements Runnable
    // prevent pressing against surfaces; this prevents artifacts
    public void bindMovement(MovingBoundingObject obj)
    {
-      if(obj.getXSpeed() > 0.0 && touchingRightWall(obj))
-         obj.setXSpeed(0.0);
-      else if(obj.getXSpeed() < 0.0 && touchingLeftWall(obj))
-         obj.setXSpeed(0.0);
+      double newX = ((int)obj.getXLoc()) + .5;
+      double newY = ((int)obj.getYLoc()) + .5;
       if(obj.getYSpeed() > 0.0 && touchingFloor(obj))
+      {
          obj.setYSpeed(0.0);
+         obj.setYLoc(newY + .5 - obj.getHalfHeight() - .0001);
+      }
       else if(obj.getYSpeed() < 0.0 && touchingCeiling(obj))
+      {
          obj.setYSpeed(0.0);
+         obj.setYLoc(newY - .5 + obj.getHalfHeight() + .0001);
+      }
+      if(obj.getXSpeed() > 0.0 && touchingRightWall(obj))
+      {
+         obj.setXSpeed(0.0);
+         obj.setXLoc(newX + .5 - obj.getHalfWidth() - .0001);
+      }
+      else if(obj.getXSpeed() < 0.0 && touchingLeftWall(obj))
+      {
+         obj.setXSpeed(0.0);
+         obj.setXLoc(newX - .5 + obj.getHalfWidth() + .0001);
+      }
    }
    
    // is it touching in the Y+ direction?
