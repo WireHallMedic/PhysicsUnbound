@@ -101,19 +101,35 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
    }
    
    // returns x, y to start searching for geometric collisions
-   public synchronized DoublePair getPotentialCollisionOrigin()
+   public synchronized int[] getPotentialCollisionOrigin(double seconds)
    {
-      double xOrigin = Math.min(getXLoc() - getHalfWidth(), getXLoc() - getHalfWidth() + getXSpeed());
-      double yOrigin = Math.min(getYLoc() - getHalfWidth(), getYLoc() - getHalfWidth() + getYSpeed());
-      return new DoublePair(xOrigin, yOrigin);
+      double baseXLoc = getXLoc() - getHalfWidth();
+      double baseYLoc = getYLoc() - getHalfHeight();
+      double xOrigin = Math.min(baseXLoc, baseXLoc + (getXSpeed() * seconds));
+      double yOrigin = Math.min(baseYLoc, baseYLoc + (getYSpeed() * seconds));
+      // because the direction of truncating reverses as you traverse zero
+      if(xOrigin < 0.0)
+         xOrigin -= 1.0;
+      if(yOrigin < 0.0)
+         yOrigin -= 1.0;
+      int[] returnArr = {(int)xOrigin, (int)yOrigin};
+      return returnArr;
    }
    
    // returns x, y to end searching for geometric collisions
-   public synchronized DoublePair getPotentialCollisionEnd()
+   public synchronized int[] getPotentialCollisionEnd(double seconds)
    {
-      double xOrigin = Math.max(getXLoc() + getHalfWidth(), getXLoc() + getHalfWidth() + getXSpeed());
-      double yOrigin = Math.max(getYLoc() + getHalfWidth(), getYLoc() + getHalfWidth() + getYSpeed());
-      return new DoublePair(xOrigin, yOrigin);
+      double baseXLoc = getXLoc() + getHalfWidth();
+      double baseYLoc = getYLoc() + getHalfHeight();
+      double xOrigin = Math.max(baseXLoc, baseXLoc + (getXSpeed() * seconds));
+      double yOrigin = Math.max(baseYLoc, baseYLoc + (getYSpeed() * seconds));
+      // because the direction of truncating reverses as you traverse zero
+      if(xOrigin < 0.0)
+         xOrigin -= 1.0;
+      if(yOrigin < 0.0)
+         yOrigin -= 1.0;
+      int[] returnArr = {(int)xOrigin, (int)yOrigin};
+      return returnArr;
    }
    
    // adjust speeds to stop short of a collision

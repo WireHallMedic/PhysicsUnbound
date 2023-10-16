@@ -21,6 +21,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private double walkSpeed = 10.0;
    private int collisionIndicationCounter = 0;
    private MovingBoundingObject lastHitBox = null;
+   private int inset = tileSizePixels;
    
    private boolean leftHeld;
    private boolean rightHeld;
@@ -38,7 +39,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       box.setXMaxSpeed(walkSpeed);
       engine.add(box, PhysicsUnlockedEngine.PLAYER);
       
-      bouncingBox = new BoundingBox[100];
+      bouncingBox = new BoundingBox[1];
       for(int i = 0; i < bouncingBox.length; i++)
       {
          bouncingBox[i] = new BoundingBox(.75, .75);
@@ -175,7 +176,18 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
          {
             g2d.setColor(Color.BLACK);
          }
-         g2d.fillRect(x * tileSizePixels, y * tileSizePixels, tileSizePixels, tileSizePixels);
+         g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
+      }
+      
+      int[] geoColCheckOrigin = box.getPotentialCollisionOrigin(.01);
+      int[] geoColCheckEnd = box.getPotentialCollisionEnd(.01);
+      g2d.setColor(Color.GRAY);
+      int checked = 0;
+      for(int x = geoColCheckOrigin[0]; x <= geoColCheckEnd[0]; x++)
+      for(int y = geoColCheckOrigin[1]; y <= geoColCheckEnd[1]; y++)
+      {
+         checked++;
+         g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
       }
       
       // grid
@@ -184,33 +196,36 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       int maxHeight = geometry[0].length * tileSizePixels;
       for(int x = 0; x < geometry.length + 1; x++)
       {
-         g2d.drawLine(x * tileSizePixels, 0, x * tileSizePixels, maxHeight);
+         g2d.drawLine(x * tileSizePixels + inset, 0 + inset, x * tileSizePixels + inset, maxHeight + inset);
       }
       for(int y = 0; y < geometry[0].length + 1; y++)
       {
-         g2d.drawLine(0, y * tileSizePixels, maxWidth, y * tileSizePixels);
+         g2d.drawLine(0 + inset, y * tileSizePixels + inset, maxWidth + inset, y * tileSizePixels + inset);
       }
       
-      // objects
-      
+      // text
       g2d.setColor(Color.ORANGE);
-      g2d.drawString("CPS: " + engine.getCPS(), 5, maxHeight + 15);
-      g2d.drawString("Position: " + box.getLoc().serialize(), 5, maxHeight + 30);
-      g2d.drawString("Acceleration: " + box.getAcceleration().serialize(), 5, maxHeight + 45);
-      g2d.drawString("Speed: " + box.getSpeed().serialize(), 5, maxHeight + 60);
-      g2d.drawString("On ground: " + engine.touchingFloor(box), 200, maxHeight + 15);
-      g2d.drawString("Touching left: " + engine.touchingLeftWall(box), 200, maxHeight + 30);
-      g2d.drawString("Touching right: " + engine.touchingRightWall(box), 200, maxHeight + 45);
+      g2d.drawString("CPS: " + engine.getCPS(), 5 + inset, maxHeight + 15 + inset);
+      g2d.drawString("Position: " + box.getLoc().serialize(), 5 + inset, maxHeight + 30 + inset);
+      g2d.drawString("Acceleration: " + box.getAcceleration().serialize(), 5 + inset, maxHeight + 45 + inset);
+      g2d.drawString("Speed: " + box.getSpeed().serialize(), 5 + inset, maxHeight + 60 + inset);
+      g2d.drawString("Touching down: " + engine.touchingFloor(box), 200 + inset, maxHeight + 15 + inset);
+      g2d.drawString("Touching left: " + engine.touchingLeftWall(box), 200 + inset, maxHeight + 30 + inset);
+      g2d.drawString("Touching right: " + engine.touchingRightWall(box), 200 + inset, maxHeight + 45 + inset);
+      g2d.drawString("Touching up: " + engine.touchingCeiling(box), 200 + inset, maxHeight + 60 + inset);
+      g2d.drawString("Tiles Checked: " + checked, 400 + inset, maxHeight + 15 + inset);
+      g2d.drawString("Tiles Check Origin: " + geoColCheckOrigin[0] + ", " + geoColCheckOrigin[1], 400 + inset, maxHeight + 30 + inset);
+      g2d.drawString("Tiles Check End: " + geoColCheckEnd[0] + ", " + geoColCheckEnd[1], 400 + inset, maxHeight + 45 + inset);
       
-      
+      // objects
       int x;
       int y;
       int width;
       int height;
       for(BoundingBox bBox : bouncingBox)
       {
-         x = (int)(bBox.getDrawOriginX() * tileSizePixels);
-         y = (int)(bBox.getDrawOriginY() * tileSizePixels);
+         x = (int)(bBox.getDrawOriginX() * tileSizePixels) + inset;
+         y = (int)(bBox.getDrawOriginY() * tileSizePixels) + inset;
          width = (int)(bBox.getWidth() * tileSizePixels);
          height = (int)(bBox.getHeight() * tileSizePixels);
          if(collisionIndicationCounter > 0 && bBox == lastHitBox)
@@ -223,8 +238,8 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       }
       
       // launch box
-      x = (int)(launchBox.getDrawOriginX() * tileSizePixels);
-      y = (int)(launchBox.getDrawOriginY() * tileSizePixels);
+      x = (int)(launchBox.getDrawOriginX() * tileSizePixels) + inset;
+      y = (int)(launchBox.getDrawOriginY() * tileSizePixels) + inset;
       width = (int)(launchBox.getWidth() * tileSizePixels);
       height = (int)(launchBox.getHeight() * tileSizePixels);
       g2d.setColor(Color.YELLOW);
@@ -233,24 +248,24 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       g2d.drawRect(x, y, width, height);
       
       // shield
-      x = (int)(shield1.getDrawOriginX() * tileSizePixels);
-      y = (int)(shield1.getDrawOriginY() * tileSizePixels);
+      x = (int)(shield1.getDrawOriginX() * tileSizePixels) + inset;
+      y = (int)(shield1.getDrawOriginY() * tileSizePixels) + inset;
       width = (int)(shield1.getWidth() * tileSizePixels);
       height = (int)(shield1.getHeight() * tileSizePixels);
       g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
       g2d.setColor(Color.BLACK);
       g2d.drawRect(x, y, width, height);
-      x = (int)(shield2.getDrawOriginX() * tileSizePixels);
-      y = (int)(shield2.getDrawOriginY() * tileSizePixels);
+      x = (int)(shield2.getDrawOriginX() * tileSizePixels) + inset;
+      y = (int)(shield2.getDrawOriginY() * tileSizePixels) + inset;
       g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
       g2d.setColor(Color.BLACK);
       g2d.drawRect(x, y, width, height);
       
       // player last to be in front
-      x = (int)(box.getDrawOriginX() * tileSizePixels);
-      y = (int)(box.getDrawOriginY() * tileSizePixels);
+      x = (int)(box.getDrawOriginX() * tileSizePixels) + inset;
+      y = (int)(box.getDrawOriginY() * tileSizePixels) + inset;
       width = (int)(box.getWidth() * tileSizePixels);
       height = (int)(box.getHeight() * tileSizePixels);
       if(collisionIndicationCounter > 0)

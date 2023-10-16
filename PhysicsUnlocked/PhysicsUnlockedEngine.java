@@ -149,10 +149,10 @@ public class PhysicsUnlockedEngine implements Runnable
                bindMovement(obj);
                // generate culled list of potential geometric collisions and test
                Vector<DoublePair> prospectList = new Vector<DoublePair>();
-               DoublePair origin = obj.getPotentialCollisionOrigin();
-               DoublePair end = obj.getPotentialCollisionEnd();
-               for(int x = (int)origin.x; x <= (int)end.x; x++)
-               for(int y = (int)origin.y; y <= (int)end.y; y++)
+               int[] origin = obj.getPotentialCollisionOrigin(secondsElapsed);
+               int[] end = obj.getPotentialCollisionEnd(secondsElapsed);
+               for(int x = origin[0]; x <= end[0]; x++)
+               for(int y = origin[1]; y <= end[1]; y++)
                {
                   if(isInBounds(x, y))
                   {
@@ -409,22 +409,19 @@ public class PhysicsUnlockedEngine implements Runnable
    private boolean collisionCheckGeometry(int x, int y, MovingBoundingObject obj){return collisionCheckGeometry(x, y, obj, 0.0, 0.0);}
    private boolean collisionCheckGeometry(int x, int y, MovingBoundingObject obj, double xShift, double yShift)
    {
-      if(isInBounds(x, y))
-      {
-         if(geometry[x][y])
-         {
-            double minX = x - obj.getHalfWidth();
-            double minY = y - obj.getHalfHeight();
-            double maxX = x + 1.0 + obj.getHalfWidth();
-            double maxY = y + 1.0 + obj.getHalfHeight();
-            return obj.getXLoc() + xShift <= maxX &&
-                   obj.getXLoc() + xShift >= minX &&
-                   obj.getYLoc() + yShift <= maxY &&
-                   obj.getYLoc() + yShift >= minY;
-         }
+      // in bounds, but not a solid tile
+      if(isInBounds(x, y) && !geometry[x][y])
          return false;
-      }
-      return true; // OOB is always a collision
+      
+      // OOB or solid tile
+      double minX = x - obj.getHalfWidth();
+      double minY = y - obj.getHalfHeight();
+      double maxX = x + 1.0 + obj.getHalfWidth();
+      double maxY = y + 1.0 + obj.getHalfHeight();
+      return obj.getXLoc() + xShift <= maxX &&
+             obj.getXLoc() + xShift >= minX &&
+             obj.getYLoc() + yShift <= maxY &&
+             obj.getYLoc() + yShift >= minY;
    }
    
    // order list by closest
