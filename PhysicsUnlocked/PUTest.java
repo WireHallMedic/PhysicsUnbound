@@ -328,22 +328,15 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       }
       
       // shields
-      if(obj == shield1 || obj == shield2)
+      if(obj == shield1 || obj == shield2 || obj == shield3)
       {
          if(subj != null)
          {
-            double xDist = Math.abs(obj.getXLoc() - subj.getXLoc());
-            double yDist = Math.abs(obj.getYLoc() - subj.getYLoc());
-            
-            if(obj.getYLoc() - subj.getYLoc() < 0.0)  // subject is below
-               subj.setYSpeed(Math.abs(subj.getYSpeed()));
-            else  // subject is above
-               subj.setYSpeed(Math.abs(subj.getYSpeed()) * -1);
-               
-            if(obj.getXLoc() - subj.getXLoc() < 0.0)  // subject is right
-               subj.setXSpeed(Math.abs(subj.getXSpeed()));
-            else  // subject is left
-               subj.setXSpeed(Math.abs(subj.getXSpeed()) * -1);
+            double speed = subj.getSpeed().getMagnitude();
+            DoublePair diff = DoublePair.difference(subj.getLoc(), box.getLoc());
+            subj.setSpeed(DoublePair.getFromAngle(diff.getAngle()));
+            subj.setXSpeed(subj.getXSpeed() * speed);
+            subj.setYSpeed(subj.getYSpeed() * speed);
          }
       }
    }
