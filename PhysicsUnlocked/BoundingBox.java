@@ -40,11 +40,15 @@ public class BoundingBox extends MovingBoundingObject
    }
    
    // as the center point is used for logic, we need some small calculations for drawing
+   // additionally, there's a small offset needed due to float to int conversion
    public int getDrawOriginX(int tileSizePixels)
    {
       return (int)((getLoc().x - getHalfSize().x) * tileSizePixels) + 1;
    }
    
+   
+   // as the center point is used for logic, we need some small calculations for drawing
+   // additionally, there's a small offset needed due to float to int conversion
    public int getDrawOriginY(int tileSizePixels)
    {
       return (int)((getLoc().y - getHalfSize().y) * tileSizePixels) + 1;
