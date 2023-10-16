@@ -26,7 +26,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private boolean rightHeld;
    private boolean upHeld;
    private boolean downHeld;
-   private boolean topDown = false;
+   private boolean topDown = true;
    
 
    public PUTest()
@@ -270,13 +270,13 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       boolean[][] geometry = new boolean[width][height];
       for(int x = 0; x < width; x++)
       {
-         geometry[x][0] = true;
-         geometry[x][height - 2] = true;
-      }
-      for(int y = 0; y < height - 1; y++)
-      {
-         geometry[0][y] = true;
-         geometry[geometry.length - 1][y] = true;
+  //        geometry[x][0] = true;
+//          geometry[x][height - 2] = true;
+//       }
+//       for(int y = 0; y < height - 1; y++)
+//       {
+//          geometry[0][y] = true;
+//          geometry[geometry.length - 1][y] = true;
       }
       
       for(int i = 0; i < 5; i++)

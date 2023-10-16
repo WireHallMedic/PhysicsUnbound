@@ -154,8 +154,15 @@ public class PhysicsUnlockedEngine implements Runnable
                for(int x = (int)origin.x; x <= (int)end.x; x++)
                for(int y = (int)origin.y; y <= (int)end.y; y++)
                {
-                  if(isInBounds(x, y) && geometry[x][y])
+                  if(isInBounds(x, y))
+                  {
+                     if(geometry[x][y])
+                        prospectList.add(new DoublePair((double)x, (double)y));
+                  }
+                  else
+                  {
                      prospectList.add(new DoublePair((double)x, (double)y));
+                  }
                }
                // sort list
                prospectList = getOrderedList(prospectList, obj.getLoc());

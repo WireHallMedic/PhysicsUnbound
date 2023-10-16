@@ -96,6 +96,13 @@ public class MovingCollisionTest
       assertEquals("All involved have event", 2, listener.getTotalCollisions());
       
       listener.clearList();
+      player.setLoc(-2.0, -2.0);
+      engine.doCollisionChecks();
+      assertTrue("Player collides with OOB", engine.isCollidingWithGeometry(player));
+      assertEquals("Push collision doesn't trigger event", 0, listener.getTotalCollisions());
+      
+      
+      listener.clearList();
       player.setLoc(.5, .5);
       engine.doCollisionChecks();
       assertFalse("pushedByGeometry = false turns off geometry collision (as they should be pushed instead)", 
