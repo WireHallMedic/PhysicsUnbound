@@ -8,8 +8,6 @@ package PhysicsUnlocked;
 public class MovingCollision
 {
 	private MovingBoundingObject otherObject;
-	private boolean geometryCollision;
-	private boolean nonGeometryCollision;
    private MovingBoundingObject source;
 
 
