@@ -27,14 +27,14 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private boolean rightHeld;
    private boolean upHeld;
    private boolean downHeld;
-   private boolean topDown = false;
+   private boolean topDown = true;
    
 
    public PUTest()
    {
       super();
       engine = new PhysicsUnlockedEngine();
-      box = new BoundingBox(.95, .95);
+      box = new BoundingBox(.90, .90);
       box.setLoc(6.0, 3.0);
       box.setXMaxSpeed(walkSpeed);
       engine.add(box, PhysicsUnlockedEngine.PLAYER);
@@ -224,8 +224,8 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       int height;
       for(BoundingBox bBox : bouncingBox)
       {
-         x = (int)(bBox.getDrawOriginX() * tileSizePixels) + inset;
-         y = (int)(bBox.getDrawOriginY() * tileSizePixels) + inset;
+         x = bBox.getDrawOriginX(tileSizePixels) + inset;
+         y = bBox.getDrawOriginY(tileSizePixels) + inset;
          width = (int)(bBox.getWidth() * tileSizePixels);
          height = (int)(bBox.getHeight() * tileSizePixels);
          if(collisionIndicationCounter > 0 && bBox == lastHitBox)
@@ -234,12 +234,12 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
             g2d.setColor(Color.GREEN);
          g2d.fillRect(x, y, width, height);
          g2d.setColor(Color.BLACK);
-    //     g2d.drawRect(x, y, width, height);
+     //    g2d.drawRect(x, y, width, height);
       }
       
       // launch box
-      x = (int)(launchBox.getDrawOriginX() * tileSizePixels) + inset;
-      y = (int)(launchBox.getDrawOriginY() * tileSizePixels) + inset;
+      x = launchBox.getDrawOriginX(tileSizePixels) + inset;
+      y = launchBox.getDrawOriginY(tileSizePixels) + inset;
       width = (int)(launchBox.getWidth() * tileSizePixels);
       height = (int)(launchBox.getHeight() * tileSizePixels);
       g2d.setColor(Color.YELLOW);
@@ -248,24 +248,24 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    //   g2d.drawRect(x, y, width, height);
       
       // shield
-      x = (int)(shield1.getDrawOriginX() * tileSizePixels) + inset;
-      y = (int)(shield1.getDrawOriginY() * tileSizePixels) + inset;
+      x = shield1.getDrawOriginX(tileSizePixels) + inset;
+      y = shield1.getDrawOriginY(tileSizePixels) + inset;
       width = (int)(shield1.getWidth() * tileSizePixels);
       height = (int)(shield1.getHeight() * tileSizePixels);
       g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
       g2d.setColor(Color.BLACK);
       g2d.drawRect(x, y, width, height);
-      x = (int)(shield2.getDrawOriginX() * tileSizePixels) + inset;
-      y = (int)(shield2.getDrawOriginY() * tileSizePixels) + inset;
+      x = shield2.getDrawOriginX(tileSizePixels) + inset;
+      y = shield2.getDrawOriginY(tileSizePixels) + inset;
       g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
       g2d.setColor(Color.BLACK);
   //    g2d.drawRect(x, y, width, height);
       
       // player last to be in front
-      x = (int)(box.getDrawOriginX() * tileSizePixels) + inset;
-      y = (int)(box.getDrawOriginY() * tileSizePixels) + inset;
+      x = box.getDrawOriginX(tileSizePixels) + inset;
+      y = box.getDrawOriginY(tileSizePixels) + inset;
       width = (int)(box.getWidth() * tileSizePixels);
       height = (int)(box.getHeight() * tileSizePixels);
       if(collisionIndicationCounter > 0)

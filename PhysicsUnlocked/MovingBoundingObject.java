@@ -34,8 +34,8 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
    public DoublePair getMaxSpeed(){return new DoublePair(maxSpeed);}
 	public boolean isAffectedByGravity(){return affectedByGravity;}
 	public boolean isPushedByGeometry(){return pushedByGeometry;}
-   public abstract double getDrawOriginX();
-   public abstract double getDrawOriginY();
+   public abstract int getDrawOriginX(int tileSizePixels);
+   public abstract int getDrawOriginY(int tileSizePixels);
 
 
 	public synchronized void setXSpeed(double x){speed.x = x;}
