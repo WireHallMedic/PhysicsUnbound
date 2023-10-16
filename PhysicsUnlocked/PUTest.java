@@ -32,6 +32,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    // play around with toggling these
    private boolean topDown = false;
    private boolean showTerrainChecked = false;
+   private int bouncingBlockCount = 50;
    
 
    public PUTest()
@@ -43,7 +44,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       box.setXMaxSpeed(walkSpeed);
       engine.add(box, PhysicsUnlockedEngine.PLAYER);
       
-      bouncingBox = new BoundingBox[10];
+      bouncingBox = new BoundingBox[bouncingBlockCount];
       for(int i = 0; i < bouncingBox.length; i++)
       {
          bouncingBox[i] = new BoundingBox(.75, .75);
