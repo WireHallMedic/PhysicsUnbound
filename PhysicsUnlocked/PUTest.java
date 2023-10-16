@@ -13,6 +13,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private BoundingBox launchBox;
    private FollowingBB shield1;
    private FollowingBB shield2;
+   private FollowingBB shield3;
    private int tileSizePixels = 25;
    private int timeCounter;
    private double gravity = 20.0;
@@ -72,13 +73,14 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       engine.add(launchBox, PhysicsUnlockedEngine.ENVIRONMENT);
       
       shield1 = new FollowingBB(.25, .25, box);
-      shield1.setLoc(0.0, -1.0);
       shield1.addCollisionListener(this);
       engine.add(shield1, PhysicsUnlockedEngine.ENVIRONMENT);
       shield2 = new FollowingBB(.25, .25, box);
-      shield2.setLoc(0.0, 1.0);
       shield2.addCollisionListener(this);
       engine.add(shield2, PhysicsUnlockedEngine.ENVIRONMENT);
+      shield3 = new FollowingBB(.25, .25, box);
+      shield3.addCollisionListener(this);
+      engine.add(shield3, PhysicsUnlockedEngine.ENVIRONMENT);
       
       if(!topDown)
       {
@@ -150,7 +152,8 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       double rotation = (timeCounter % 30) / 30.0;
       double angle = DoublePair.FULL_CIRCLE - (DoublePair.FULL_CIRCLE * rotation);
       shield1.setRelativeLoc(DoublePair.getFromAngle(angle));
-      shield2.setRelativeLoc(DoublePair.getFromAngle(DoublePair.simplifyAngle(angle + DoublePair.HALF_CIRCLE)));
+      shield2.setRelativeLoc(DoublePair.getFromAngle(DoublePair.simplifyAngle(angle + (DoublePair.FULL_CIRCLE / 3))));
+      shield3.setRelativeLoc(DoublePair.getFromAngle(DoublePair.simplifyAngle(angle + (DoublePair.FULL_CIRCLE * 2 / 3))));
       
       if(collisionIndicationCounter > 0)
          collisionIndicationCounter--;
@@ -179,16 +182,17 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
          g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
       }
       
+      // terrain checked
       int[] geoColCheckOrigin = box.getPotentialCollisionOrigin(.01);
       int[] geoColCheckEnd = box.getPotentialCollisionEnd(.01);
       g2d.setColor(Color.GRAY);
       int checked = 0;
-   //    for(int x = geoColCheckOrigin[0]; x <= geoColCheckEnd[0]; x++)
-//       for(int y = geoColCheckOrigin[1]; y <= geoColCheckEnd[1]; y++)
-//       {
-//          checked++;
-//          g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
-//       }
+      for(int x = geoColCheckOrigin[0]; x <= geoColCheckEnd[0]; x++)
+      for(int y = geoColCheckOrigin[1]; y <= geoColCheckEnd[1]; y++)
+      {
+         checked++;
+         g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
+      }
       
       // grid
       g2d.setColor(Color.CYAN);
@@ -233,8 +237,6 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
          else
             g2d.setColor(Color.GREEN);
          g2d.fillRect(x, y, width, height);
-         g2d.setColor(Color.BLACK);
-     //    g2d.drawRect(x, y, width, height);
       }
       
       // launch box
@@ -244,24 +246,20 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       height = (int)(launchBox.getHeight() * tileSizePixels);
       g2d.setColor(Color.YELLOW);
       g2d.fillRect(x, y, width, height);
-      g2d.setColor(Color.BLACK);
-   //   g2d.drawRect(x, y, width, height);
       
-      // shield
+      // shields
       x = shield1.getDrawOriginX(tileSizePixels) + inset;
       y = shield1.getDrawOriginY(tileSizePixels) + inset;
       width = (int)(shield1.getWidth() * tileSizePixels);
       height = (int)(shield1.getHeight() * tileSizePixels);
       g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
-      g2d.setColor(Color.BLACK);
-      g2d.drawRect(x, y, width, height);
       x = shield2.getDrawOriginX(tileSizePixels) + inset;
       y = shield2.getDrawOriginY(tileSizePixels) + inset;
-      g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
-      g2d.setColor(Color.BLACK);
-  //    g2d.drawRect(x, y, width, height);
+      x = shield3.getDrawOriginX(tileSizePixels) + inset;
+      y = shield3.getDrawOriginY(tileSizePixels) + inset;
+      g2d.fillRect(x, y, width, height);
       
       // player last to be in front
       x = box.getDrawOriginX(tileSizePixels) + inset;
@@ -273,8 +271,6 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       else
          g2d.setColor(Color.ORANGE);
       g2d.fillRect(x, y, width, height);
-      g2d.setColor(Color.BLACK);
-  //    g2d.drawRect(x, y, width, height);
       
    }
    
