@@ -308,7 +308,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    public void movingCollisionOccured(MovingCollision mc)
    {
       MovingBoundingObject obj = mc.getSource();
-      MovingBoundingObject subj = mc.getMovingBoundingObject();
+      MovingBoundingObject subj = mc.getOtherObject();
       
       // bouncing boxes
       DoublePair normalPair = engine.getOrthoGeometryCollisionNormals(obj);

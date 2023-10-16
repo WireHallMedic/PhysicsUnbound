@@ -196,8 +196,8 @@ public class MovingCollisionTest
       {
          for(MovingCollision col : list)
          {
-            if((col.getSource() == mc1 && col.getMovingBoundingObject() == mc2) ||
-               (col.getSource() == mc2 && col.getMovingBoundingObject() == mc1))
+            if((col.getSource() == mc1 && col.getOtherObject() == mc2) ||
+               (col.getSource() == mc2 && col.getOtherObject() == mc1))
                return true;
          }
          return false;
