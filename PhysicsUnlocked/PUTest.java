@@ -28,7 +28,10 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private boolean rightHeld;
    private boolean upHeld;
    private boolean downHeld;
-   private boolean topDown = true;
+   
+   // play around with toggling these
+   private boolean topDown = false;
+   private boolean showTerrainChecked = false;
    
 
    public PUTest()
@@ -191,7 +194,8 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       for(int y = geoColCheckOrigin[1]; y <= geoColCheckEnd[1]; y++)
       {
          checked++;
-         g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
+         if(showTerrainChecked)
+            g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
       }
       
       // grid
