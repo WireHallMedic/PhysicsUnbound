@@ -146,8 +146,6 @@ public class PhysicsUnlockedEngine implements Runnable
             // if the object is pushed by geometry, adjust its speeds to stop short of collision
             if(obj.isPushedByGeometry())
             {
-               // prevent weirdness by setting movement against adjacent surfaces to 0.
-               bindMovement(obj);
                // generate culled list of potential geometric collisions and test
                Vector<DoublePair> prospectList = new Vector<DoublePair>();
                int[] origin = obj.getPotentialCollisionOrigin(secondsElapsed);
@@ -302,33 +300,7 @@ public class PhysicsUnlockedEngine implements Runnable
    {
       return accl * secondsElapsed;
    }
-   
-   // prevent pressing against surfaces; this prevents artifacts
-   public void bindMovement(MovingBoundingObject obj)
-   {
-      double newX = ((int)obj.getXLoc()) + .5;
-      double newY = ((int)obj.getYLoc()) + .5;
-      if(obj.getYSpeed() > 0.0 && touchingFloor(obj))
-      {
-         obj.setYSpeed(0.0);
-         obj.setYLoc(newY + .5 - obj.getHalfHeight() - .0001);
-      }
-      else if(obj.getYSpeed() < 0.0 && touchingCeiling(obj))
-      {
-         obj.setYSpeed(0.0);
-         obj.setYLoc(newY - .5 + obj.getHalfHeight() + .0001);
-      }
-      if(obj.getXSpeed() > 0.0 && touchingRightWall(obj))
-      {
-         obj.setXSpeed(0.0);
-         obj.setXLoc(newX + .5 - obj.getHalfWidth() - .0001);
-      }
-      else if(obj.getXSpeed() < 0.0 && touchingLeftWall(obj))
-      {
-         obj.setXSpeed(0.0);
-         obj.setXLoc(newX - .5 + obj.getHalfWidth() + .0001);
-      }
-   }
+
    
    // is it touching in the Y+ direction?
    public boolean touchingFloor(MovingBoundingObject obj)
