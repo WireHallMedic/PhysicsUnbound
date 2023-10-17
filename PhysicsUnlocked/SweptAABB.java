@@ -1,3 +1,16 @@
+/*
+This is an implementation of swept axis-aligned bounding boxes, also called projected rectangle collision.
+All calculations are done when the constructor is called.
+
+The object is essentially the return value of a function. The values normalX and normalY are, well, normals. If
+no collision occured, they'll both be zero, otherwise they represent "pushback" along their respective axis.
+
+Time represents the portion of the distance the object would travel that occurs before a collision. So if the 
+objects are already in collision, this would be 0.0. If no collision occurs, this will be 1.0. If a collision
+would occur at three-quarters of the distance the object is trying to move, this number would be .75 regardless
+of what the attempted distance would be.
+*/
+
 package PhysicsUnlocked;
 
 public class SweptAABB
@@ -22,21 +35,21 @@ public class SweptAABB
       collision = false;
    }
    
-   public SweptAABB(DoublePair point, DoublePair speed, DoublePair boxOrigin, DoublePair boxSize)
+   public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize)
    {
-      doCheck(point, speed, boxOrigin, boxSize);
+      doCheck(point, distance, boxOrigin, boxSize);
    }
    
    public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY)
    {
       DoublePair boxOrigin = new DoublePair((1.0 * geometryX) - obj.getHalfWidth(), (1.0 * geometryY) - obj.getHalfHeight());
       DoublePair boxSize = new DoublePair(1.0 + obj.getWidth(), 1.0 + obj.getHeight());
-      DoublePair speed = new DoublePair(obj.getSpeed().x * secondsElapsed, obj.getSpeed().y * secondsElapsed);
-      doCheck(obj.getLoc(), speed, boxOrigin, boxSize);
+      DoublePair distance = new DoublePair(obj.getSpeed().x * secondsElapsed, obj.getSpeed().y * secondsElapsed);
+      doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
    }
 
    // do all the work
-   private void doCheck(DoublePair point, DoublePair speed, DoublePair boxOrigin, DoublePair boxSize)
+   private void doCheck(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize)
    {
       normalX = 0;
       normalY = 0;
@@ -47,7 +60,7 @@ public class SweptAABB
       DoublePair farIntercept = new DoublePair();
       
       // determine intercepts
-      if(speed.x > 0.0)
+      if(distance.x > 0.0)
       {
          nearIntercept.x = boxOrigin.x - point.x;
          farIntercept.x = (boxOrigin.x + boxSize.x) - point.x;
@@ -58,7 +71,7 @@ public class SweptAABB
          farIntercept.x = boxOrigin.x - point.x;
       }
       
-      if(speed.y > 0.0)
+      if(distance.y > 0.0)
       {
          nearIntercept.y = boxOrigin.y - point.y;
          farIntercept.y = (boxOrigin.y + boxSize.y) - point.y;
@@ -74,7 +87,7 @@ public class SweptAABB
       DoublePair exitTime = new DoublePair();
       
       // use max and min values if not moving on x axis
-      if(speed.x == 0.0)
+      if(distance.x == 0.0)
       {
          entryTime.x = Double.MIN_VALUE;
          exitTime.x = Double.MAX_VALUE; 
@@ -82,11 +95,11 @@ public class SweptAABB
       // determine when would enter and exit on x axis
       else
       {
-         entryTime.x = nearIntercept.x / speed.x;
-         exitTime.x = farIntercept.x / speed.x; 
+         entryTime.x = nearIntercept.x / distance.x;
+         exitTime.x = farIntercept.x / distance.x; 
       }
       // use max and min values if not moving on y axis
-      if(speed.y == 0.0)
+      if(distance.y == 0.0)
       {
          entryTime.y = Double.MIN_VALUE;
          exitTime.y = Double.MAX_VALUE; 
@@ -94,8 +107,8 @@ public class SweptAABB
       // determine when would enter and exit on y axis
       else
       {
-         entryTime.y = nearIntercept.y / speed.y;
-         exitTime.y = farIntercept.y / speed.y; 
+         entryTime.y = nearIntercept.y / distance.y;
+         exitTime.y = farIntercept.y / distance.y; 
       }
       
       // calculate when the actual interceptions occur
