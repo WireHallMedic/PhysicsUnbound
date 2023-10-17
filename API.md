@@ -5,6 +5,8 @@ This library has a couple of constant conventions. Time is measured in seconds. 
 
 For the most part, this library doesn't know about display sizes and doesn't want to know. The exception is MovingBoundingObject.getDrawOriginX() and MovingBoundingObject.getDrawOriginY(). We need to make some small adjustments when converting between tiles (which are in double precision) and pixels (which are in int precision).
 
+All objects with some sort of size consider the center of their shape to be their origin.
+
 ## PhysicsUnlockedEngine
 This is the workhorse class. It does its calculations as frequently as it can, up to 1000 Hz. It mainly needs two things; a 2D boolean array for geometry, where true means solid and false means non-solid; and MovingBoundingObject which are the stuff that moves around and collides.
 
@@ -27,9 +29,14 @@ AffectedByGravity. This is a boolean that controls if gravity is applied to an o
 
 PushedByGeometry. This is a boolean that controls if an object stops when they collide with geometry. If false, the object will pass through and send a collision event.
 
+
 ## BoundingBox
+This is the main object for stuff on the map. It extends MovingBoundingObject. BoundingBoxes have height and width, as well as precalculating halfHeight and halfWidth as they get used a lot. Their origin is in the center of the box. Since these are the actual object classes that you'll be instantiating, they have getDrawOriginX() and getDrawOriginY(), which accept tile size in pixels and return the pixel location to actually draw the box (Java draws from the top right corner).
+
+They also have isColliding() and pointIsIn() to test collision with MovingBoundingObjects and points, respectively.
 
 ## FollowingBB
+These are BoundingBoxes that who's position is relative to another BoundingBox, its leader. You generally don't directly modify thier loc, you use setRelativeLoc() and getRelativeLoc().
 
 ## Collisions
 There are two types of collisions; those between MovingBoundingObjects that are pushed by geometry against geometry, and everything else. MovingBoundingObjects with pushedByGeometry == true are pushed when the engine processes this type of collision, and no event is triggered.
@@ -46,3 +53,10 @@ ENVIRONMENT: Collides with everything, including other ENVIRONMENT objects.
 These events are MovingCollision objects. They will always have a source, the object making the event. If it's a non-geometric collision, they will have an otherObject, the thing they bumped into. Otherwise, otherObject will be null.
 
 To be clear, when a and b collide, there will be two events; one with source = a, otherObject = b and one with source = b, otherObject = a. The engine has no concept of iFrames, so that might be something you'll need in your project.
+
+## Hitscans
+A hitscan is when you figure out where the first collision would occur on a given vector (a ray with a defined length). The PhysicsUnlocedEngine.calculateHitscan() will return a HitscanResult object. It culls what it cannot hit by the same object types listed under Collisions, above. A HitscanResult object contains the following:
+MovingBoundingObject movingObject: The MovingBoundingObject that got hit, or null if none.
+DoublePair pointOfImpact: The x, y coordinates (in tiles) of where the ray terminated.
+boolean geometryImpact: True if the ray terminated early by hitting geometry, else false.
+boolean movingObjectImpact: True if the ray terminated early by hitting a MovingBoundingObject, else false.
