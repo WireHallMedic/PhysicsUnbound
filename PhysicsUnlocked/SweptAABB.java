@@ -19,12 +19,14 @@ public class SweptAABB
 	private int normalY;    // pushback on y axis
 	private double time;    // in range of [0.0, 1.0]
    private boolean collision; // did we collide
+   private DoublePair collisionLoc;
 
 
 	public int getNormalX(){return normalX;}
 	public int getNormalY(){return normalY;}
 	public double getTime(){return time;}
    public boolean isCollision(){return collision;}
+   public DoublePair getCollisionLoc(){return new DoublePair(collisionLoc);}
 
 
    public SweptAABB()
@@ -33,11 +35,20 @@ public class SweptAABB
    	normalY = 0;
    	time = 1.0;
       collision = false;
+      collisionLoc = null;
    }
    
    public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize)
    {
       doCheck(point, distance, boxOrigin, boxSize);
+   }
+   
+   public SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj)
+   {
+      DoublePair boxOrigin = obj.getLoc();
+      boxOrigin.x -= obj.getHalfWidth();
+      boxOrigin.y -= obj.getHalfHeight();
+      doCheck(point, distance, boxOrigin, new DoublePair(obj.getWidth(), obj.getHeight()));
    }
    
    public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY)
@@ -89,7 +100,11 @@ public class SweptAABB
       // use max and min values if not moving on x axis
       if(distance.x == 0.0)
       {
-         entryTime.x = Double.MIN_VALUE;
+         if(point.x <= boxOrigin.x + boxSize.x &&
+            point.x >= boxOrigin.x)
+            entryTime.x = Double.MIN_VALUE;
+         else
+            entryTime.x = Double.MAX_VALUE;
          exitTime.x = Double.MAX_VALUE; 
       }
       // determine when would enter and exit on x axis
@@ -101,7 +116,11 @@ public class SweptAABB
       // use max and min values if not moving on y axis
       if(distance.y == 0.0)
       {
-         entryTime.y = Double.MIN_VALUE;
+         if(point.y <= boxOrigin.y + boxSize.y &&
+            point.y >= boxOrigin.y)
+            entryTime.y = Double.MIN_VALUE;
+         else
+            entryTime.y = Double.MAX_VALUE;
          exitTime.y = Double.MAX_VALUE; 
       }
       // determine when would enter and exit on y axis
@@ -116,9 +135,9 @@ public class SweptAABB
       double secondIntersection = Math.min(exitTime.x, exitTime.y);
       
       // no collision
-      if(firstIntersection > secondIntersection ||    // enters after it exits
-         entryTime.x < 0.0 && entryTime.y < 0.0 ||  // enters at negative time
-         entryTime.x > 1.0 || entryTime.y > 1.0)    // enters after time
+      if((firstIntersection > secondIntersection) ||  // enters after it exits
+         (entryTime.x < 0.0 && entryTime.y < 0.0) ||  // enters at negative time
+         (entryTime.x > 1.0 || entryTime.y > 1.0))    // enters after time
       {
          return;
       }
@@ -136,13 +155,16 @@ public class SweptAABB
             else
                normalY = -1;
          time = firstIntersection;
+         if(time == Double.MIN_VALUE)
+            time = 0.0;
+         collisionLoc = new DoublePair(point.x + (distance.x * time), point.y + (distance.y * time));
          collision = true;
       }
    }
    
    public String serialize()
    {
-      return String.format("Time %1.3f, normalX %d, normalY %d", time, normalX, normalY);
+      return String.format("Time %1.3f, normalX %d, normalY %d, collision at %s", time, normalX, normalY, collisionLoc);
    }
    
    @Override

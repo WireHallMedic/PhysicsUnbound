@@ -6,8 +6,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class SweptAABBTest {
-
+public class SweptAABBTest 
+{
+   private static BoundingBox player = null;
+   private static BoundingBox enemy = null;
+   private static BoundingBox playerProjectile = null;
+   private static BoundingBox enemyProjectile = null;
+   private static BoundingBox environmental = null;
+   private static PhysicsUnlockedEngine engine = null;
 
    /** Fixture initialization (common initialization
     *  for all tests). **/
@@ -112,5 +118,84 @@ public class SweptAABBTest {
       for(int i = 0; i < 1000; i++)
          counter += .001;
       assertEquals("Precision maintained at counter = 10000.0.", 100001.0, counter, .001);
+   }
+   
+   @Test public void hitscanTest()
+   {
+      PhysicsUnlockedEngine engine = engineSetUp();
+      DoublePair origin = new DoublePair(6.0, 1.0);
+      DoublePair distance = new DoublePair(0.0, 10.0);
+      DoublePair expectedDist = new DoublePair(0.0, 8.0);
+      DoublePair calcDist = new DoublePair();
+      calcDist = engine.getHitscanImpactGeometry(origin, distance);
+      MovingBoundingObject hitObject = null;
+      assertTrue("Hitscan detects wall", expectedDist.equals(calcDist));
+      
+      origin = new DoublePair(6.0, 8.0);
+      distance = new DoublePair(0.0, -10.0);
+      expectedDist = new DoublePair(0.0, -8.0);
+      calcDist = engine.getHitscanImpactGeometry(origin, distance);
+      assertTrue("Negative direction hitscan detects wall", expectedDist.equals(calcDist));
+      
+      origin = new DoublePair(6.0, 2.0);
+      distance = new DoublePair(0.001, 10.0);
+      hitObject = engine.getHitscanImpact(origin, distance, engine.ENEMY_PROJECTILE);
+      assertEquals("Enemy projectile that misses misses", null, hitObject);
+      
+      origin = new DoublePair(5.0, 2.0);
+      distance = new DoublePair(-10.0, 0.1);
+      hitObject = engine.getHitscanImpact(origin, distance, engine.ENEMY_PROJECTILE);
+      assertEquals("Enemy projectile ignores player projectile and hits player", player, hitObject);
+      
+      hitObject = null;
+      origin = new DoublePair(7.0, 4.0);
+      distance = new DoublePair(-10.0, 0.0);
+      hitObject = engine.getHitscanImpact(origin, distance, engine.PLAYER_PROJECTILE);
+    //   if(hitObject == player)System.out.println("Player");
+//       if(hitObject == enemy)System.out.println("Enemy");
+//       if(hitObject == playerProjectile)System.out.println("Player Proj");
+//       if(hitObject == enemyProjectile)System.out.println("Enemy Proj");
+//       if(hitObject == environmental)System.out.println("Env");
+      assertEquals("Player projectile ignores enemy projectile and hits enemy", enemy, hitObject);
+   }
+   
+   private PhysicsUnlockedEngine engineSetUp() 
+   {
+      engine = new PhysicsUnlockedEngine();
+      boolean[][] geometry = new boolean[10][10];
+      for(int i = 0; i < 10; i++)
+      {
+         geometry[0][i] = true;
+         geometry[9][i] = true;
+         geometry[i][0] = true;
+         geometry[i][9] = true;
+      }
+      engine.setGeometry(geometry);
+      
+      player = new BoundingBox(1.0, 1.0);
+      player.setLoc(2.0, 2.0);
+      engine.add(player, PhysicsUnlockedEngine.PLAYER);
+      
+      enemy = new BoundingBox(1.0, 1.0);
+      enemy.setLoc(2.0, 4.0);
+      engine.add(enemy, PhysicsUnlockedEngine.ENEMY);
+      
+      playerProjectile = new BoundingBox(1.0, 1.0);
+      playerProjectile.setLoc(4.0, 2.0);
+      playerProjectile.setPushedByGeometry(false);
+      engine.add(playerProjectile, PhysicsUnlockedEngine.PLAYER_PROJECTILE);
+      
+      enemyProjectile = new BoundingBox(1.0, 1.0);
+      enemyProjectile.setLoc(4.0, 6.0);
+      enemyProjectile.setPushedByGeometry(false);
+      engine.add(enemyProjectile, PhysicsUnlockedEngine.ENEMY_PROJECTILE);
+      
+      environmental = new BoundingBox(1.0, 1.0);
+      environmental.setLoc(4.0, 8.0);
+      engine.add(environmental, PhysicsUnlockedEngine.ENVIRONMENT);
+      
+      engine.terminate(); // we don't need it running for this
+      
+      return engine;
    }
 }

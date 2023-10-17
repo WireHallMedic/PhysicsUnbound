@@ -12,6 +12,7 @@ package PhysicsUnlocked;
 
 import java.util.*;
 import java.awt.*;
+import java.awt.event.*;
 
 public class PhysicsUnlockedEngine implements Runnable
 {
@@ -411,6 +412,71 @@ public class PhysicsUnlockedEngine implements Runnable
             return true;
       }
       return false;
+   }
+   
+   // returns the first target that will be hit, or null if no such target exists
+   public MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance){return getHitscanImpact(origin, distance, ENVIRONMENT);}
+   public MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance, int scanType)
+   {
+      Vector<MovingBoundingObject> targetList = new Vector<MovingBoundingObject>();
+      switch(scanType)
+      {
+         case PLAYER :
+         case PLAYER_PROJECTILE :   targetList = enemyList; break;
+         case ENEMY :
+         case ENEMY_PROJECTILE :    targetList = playerList; break;
+         case ENVIRONMENT :         break;
+         default :                  throw new Error("Unknown argument for scanType.");
+      }
+      MovingBoundingObject curTarget = null;
+      double curDistance = 1.1;
+      SweptAABB collision = null;
+      for(MovingBoundingObject prospect : targetList)
+      {
+         
+         collision = new SweptAABB(origin, distance, prospect);
+         if(collision.getTime() < 1.0 && collision.getTime() < curDistance)
+         {
+            curTarget = prospect;
+            curDistance = collision.getTime();
+         }
+      }
+      // always check against environment objects
+      for(MovingBoundingObject prospect : environmentList)
+      {
+         
+         collision = new SweptAABB(origin, distance, prospect);
+         if(collision.getTime() < 1.0 && collision.getTime() < curDistance)
+         {
+            curTarget = prospect;
+            curDistance = collision.getTime();
+         }
+      }
+      return curTarget;
+   }
+   
+   // returns the (tile imprecise) distance at which the hitscan will impact geometry.
+   public DoublePair getHitscanImpactGeometry(DoublePair origin, DoublePair distance)
+   {
+      double divisor = Math.max(Math.abs(distance.x), Math.abs(distance.y));
+      double xStep = distance.x / divisor;
+      double yStep = distance.y / divisor;
+      
+      int steps = 0;
+      if(distance.x != 0.0)
+         steps = (int)(distance.x / xStep) + 1;
+      else if(distance.y != 0.0)
+         steps = (int)(distance.y / yStep) + 1;
+      int xLoc;
+      int yLoc;
+      for(int i = 0; i < steps; i++)
+      {
+         xLoc = (int)(origin.x + (xStep * i));
+         yLoc = (int)(origin.y + (yStep * i));
+         if(!isInBounds(xLoc, yLoc) || geometry[xLoc][yLoc])
+            return new DoublePair(xStep * i, yStep * i);
+      }
+      return distance;
    }
    
    // is the passed location in the array?
