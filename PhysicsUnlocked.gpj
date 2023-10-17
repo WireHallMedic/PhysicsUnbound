@@ -12,24 +12,26 @@ s#i0
 s#k0
 s#j0
 s#l0
-!464;g
+!506;g
 %\011PhysicsUnlocked%sDoublePair.java
 %\011PhysicsUnlocked%sPUTest.java
 %\011PhysicsUnlocked%sBoundingBox.java
 %\011PhysicsUnlocked%sPhysicsUnlockedEngine.java
 %\011PhysicsUnlocked%sFollowingBB.java
+%\011PhysicsUnlocked%sHitscanResults.java
 %\011PhysicsUnlocked%sMovingCollision.java
 %\011PhysicsUnlocked%sMovingBoundingObject.java
 %\011PhysicsUnlocked%sSweptAABB.java
 %\011PhysicsUnlocked%sMovingCollisionListener.java
 %\011PhysicsUnlocked%sBoundingObject.java
 %\011PhysicsUnlocked%sMovingCollidable.java
-!464;f
+!506;f
 %\011PhysicsUnlocked%sDoublePair.java
 %\011PhysicsUnlocked%sPUTest.java
 %\011PhysicsUnlocked%sBoundingBox.java
 %\011PhysicsUnlocked%sPhysicsUnlockedEngine.java
 %\011PhysicsUnlocked%sFollowingBB.java
+%\011PhysicsUnlocked%sHitscanResults.java
 %\011PhysicsUnlocked%sMovingCollision.java
 %\011PhysicsUnlocked%sMovingBoundingObject.java
 %\011PhysicsUnlocked%sSweptAABB.java
@@ -41,4 +43,4 @@ s#l0
 %\011PhysicsUnlocked%sSweptAABBTest.java
 %\011PhysicsUnlocked%sMovingCollisionTest.java
 !513;t
-jgrJUnit0xr	%\011PhysicsUnlocked%sBoundingObjectTest.java	1697480910779:P%\011BoundingObject.java	%\011PhysicsUnlocked%sSweptAABBTest.java	1697480910779:P%\011SweptAABB.java	%\011PhysicsUnlocked%sMovingCollision.java	1697480910779:P%\011MovingCollisionTest.java	%\011PhysicsUnlocked%sSweptAABB.java	1697480910779:P%\011SweptAABBTest.java	%\011PhysicsUnlocked%sBoundingObject.java	1697480910779:P%\011BoundingObjectTest.java	%\011PhysicsUnlocked%sMovingCollisionTest.java	1697480910779:P%\011MovingCollision.java	
+jgrJUnit0xr	%\011PhysicsUnlocked%sBoundingObjectTest.java	1697564677435:P%\011BoundingObject.java	%\011PhysicsUnlocked%sSweptAABBTest.java	1697564970502:P%\011SweptAABB.java	%\011PhysicsUnlocked%sMovingCollision.java	1697564677435:P%\011MovingCollisionTest.java	%\011PhysicsUnlocked%sSweptAABB.java	1697564970502:P%\011SweptAABBTest.java	%\011PhysicsUnlocked%sBoundingObject.java	1697564677435:P%\011BoundingObjectTest.java	%\011PhysicsUnlocked%sMovingCollisionTest.java	1697564677435:P%\011MovingCollision.java	
