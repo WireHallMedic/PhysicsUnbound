@@ -138,14 +138,20 @@ public class SweptAABBTest
       assertTrue("Negative direction hitscan detects wall", expectedDist.equals(calcDist));
       
       origin = new DoublePair(6.0, 2.0);
-      distance = new DoublePair(0.001, 10.0);
+      distance = new DoublePair(0.0, 10.0);
       hitObject = engine.getHitscanImpact(origin, distance, engine.ENEMY_PROJECTILE);
       assertEquals("Enemy projectile that misses misses", null, hitObject);
       
       origin = new DoublePair(5.0, 2.0);
-      distance = new DoublePair(-10.0, 0.1);
+      distance = new DoublePair(-10.0, 0.0);
       hitObject = engine.getHitscanImpact(origin, distance, engine.ENEMY_PROJECTILE);
       assertEquals("Enemy projectile ignores player projectile and hits player", player, hitObject);
+      
+      hitObject = null;
+      origin = new DoublePair(2.0, 5.0);
+      distance = new DoublePair(0.0, -10.0);
+      hitObject = engine.getHitscanImpact(origin, distance, engine.ENEMY_PROJECTILE);
+      assertEquals("Enemy projectile ignores enemy and hits player", player, hitObject);
       
       hitObject = null;
       origin = new DoublePair(7.0, 4.0);
@@ -157,6 +163,18 @@ public class SweptAABBTest
 //       if(hitObject == enemyProjectile)System.out.println("Enemy Proj");
 //       if(hitObject == environmental)System.out.println("Env");
       assertEquals("Player projectile ignores enemy projectile and hits enemy", enemy, hitObject);
+      
+      hitObject = null;
+      origin = new DoublePair(2.0, 0.5);
+      distance = new DoublePair(0.0, 10.0);
+      hitObject = engine.getHitscanImpact(origin, distance, engine.PLAYER_PROJECTILE);
+      assertEquals("Player projectile ignores player and hits enemy", enemy, hitObject);
+      
+      hitObject = null;
+      origin = new DoublePair(5.0, 10.0);
+      distance = new DoublePair(-10.0, -10.0);
+      hitObject = engine.getHitscanImpact(origin, distance, engine.PLAYER_PROJECTILE);
+      assertEquals("Player projectile hits interveining env obj", environmental, hitObject);
    }
    
    private PhysicsUnlockedEngine engineSetUp() 
