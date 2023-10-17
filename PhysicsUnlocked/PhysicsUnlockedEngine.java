@@ -386,6 +386,12 @@ public class PhysicsUnlockedEngine implements Runnable
       return false;
    }
    
+   public HitscanResult calculateHitscan(DoublePair origin, DoublePair distance){return calculateHitscan(origin, distance, ENVIRONMENT);}
+   public HitscanResult calculateHitscan(DoublePair origin, DoublePair distance, int scanType)
+   {
+      return new HitscanResult(origin, distance, this, scanType);
+   }
+   
    // returns the first target that will be hit, or null if no such target exists
    public MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance){return getHitscanImpact(origin, distance, ENVIRONMENT);}
    public MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance, int scanType)
