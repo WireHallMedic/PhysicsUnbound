@@ -177,6 +177,45 @@ public class SweptAABBTest
       assertEquals("Player projectile hits interveining env obj", environmental, hitObject);
    }
    
+   @Test public void hitscanResultTest()
+   {
+      PhysicsUnlockedEngine engine = engineSetUp2();
+      DoublePair origin = new DoublePair(5.5, 2.0);
+      DoublePair distance = new DoublePair(0.0, -10.0);
+      DoublePair expectedPoI = new DoublePair(5.5, 1.0);
+      HitscanResult result = engine.calculateHitscan(origin, distance);
+      assertTrue("Geometry hit hitscan registers as geometry", result.isGeometryImpact());
+      assertFalse("Geometry hit hitscan does not register as MovingObject", result.isMovingObjectImpact());
+      assertTrue("Hitscan up impacts underside of geometry", expectedPoI.equals(result.getPointOfImpact()));
+      
+      origin = new DoublePair(5.5, 8.0);
+      distance = new DoublePair(0.0, 10.0);
+      expectedPoI = new DoublePair(5.5, 9.0);
+      result = engine.calculateHitscan(origin, distance);
+      assertTrue("Hitscan down impacts top of geometry", expectedPoI.equals(result.getPointOfImpact()));
+      
+      origin = new DoublePair(2.0, 5.5);
+      distance = new DoublePair(-10.0, 0.0);
+      expectedPoI = new DoublePair(1.0, 5.5);
+      result = engine.calculateHitscan(origin, distance);
+      assertTrue("Hitscan left impacts right side of geometry", expectedPoI.equals(result.getPointOfImpact()));
+      
+      origin = new DoublePair(8.0, 5.5);
+      distance = new DoublePair(10.0, 0.0);
+      expectedPoI = new DoublePair(9.0, 5.5);
+      result = engine.calculateHitscan(origin, distance);
+      assertTrue("Hitscan right impacts left side of geometry", expectedPoI.equals(result.getPointOfImpact()));
+      
+      origin = new DoublePair(2.0, 5.0);
+      distance = new DoublePair(10.0, 0.0);
+      expectedPoI = new DoublePair(4.5, 5.0);
+      result = engine.calculateHitscan(origin, distance);
+      assertFalse("MovingObject hit hitscan does not register as geometry", result.isGeometryImpact());
+      assertTrue("MovingObject hit hitscan registers as MovingObject", result.isMovingObjectImpact());
+      assertTrue("Hitscan hits expected target", expectedPoI.equals(result.getPointOfImpact()));
+      assertEquals("MovingObject hit hitscan returns correct MovingObject", player, result.getMovingObject());
+   }
+   
    private PhysicsUnlockedEngine engineSetUp() 
    {
       engine = new PhysicsUnlockedEngine();
@@ -211,6 +250,28 @@ public class SweptAABBTest
       environmental = new BoundingBox(1.0, 1.0);
       environmental.setLoc(4.0, 8.0);
       engine.add(environmental, PhysicsUnlockedEngine.ENVIRONMENT);
+      
+      engine.terminate(); // we don't need it running for this
+      
+      return engine;
+   }
+   
+   private PhysicsUnlockedEngine engineSetUp2() 
+   {
+      engine = new PhysicsUnlockedEngine();
+      boolean[][] geometry = new boolean[10][10];
+      for(int i = 0; i < 10; i++)
+      {
+         geometry[0][i] = true;
+         geometry[9][i] = true;
+         geometry[i][0] = true;
+         geometry[i][9] = true;
+      }
+      engine.setGeometry(geometry);
+      
+      player = new BoundingBox(1.0, 1.0);
+      player.setLoc(5.0, 5.0);
+      engine.add(player, PhysicsUnlockedEngine.PLAYER);
       
       engine.terminate(); // we don't need it running for this
       

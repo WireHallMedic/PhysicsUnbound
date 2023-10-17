@@ -58,6 +58,14 @@ public class SweptAABB
       DoublePair distance = new DoublePair(obj.getSpeed().x * secondsElapsed, obj.getSpeed().y * secondsElapsed);
       doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
    }
+   
+   // for hitscan
+   public SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY)
+   {
+      DoublePair boxOrigin = new DoublePair(geometryX, geometryY);
+      DoublePair boxSize = new DoublePair(1.0, 1.0);
+      doCheck(origin, distance, boxOrigin, boxSize);
+   }
 
    // do all the work
    private void doCheck(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize)

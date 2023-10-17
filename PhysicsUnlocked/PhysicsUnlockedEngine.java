@@ -397,26 +397,44 @@ public class PhysicsUnlockedEngine implements Runnable
    public MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance, int scanType)
    {
       Vector<MovingBoundingObject> targetList = new Vector<MovingBoundingObject>();
+      boolean checkPlayerList = true;
+      boolean checkEnemyList = true;
       switch(scanType)
       {
          case PLAYER :
-         case PLAYER_PROJECTILE :   targetList = enemyList; break;
+         case PLAYER_PROJECTILE :   checkPlayerList = false; break;
          case ENEMY :
-         case ENEMY_PROJECTILE :    targetList = playerList; break;
+         case ENEMY_PROJECTILE :    checkEnemyList = false; break;
          case ENVIRONMENT :         break;
          default :                  throw new Error("Unknown argument for scanType.");
       }
       MovingBoundingObject curTarget = null;
       double curDistance = 1.1;
       SweptAABB collision = null;
-      for(MovingBoundingObject prospect : targetList)
-      {
-         
-         collision = new SweptAABB(origin, distance, prospect);
-         if(collision.getTime() < 1.0 && collision.getTime() < curDistance)
+      if(checkPlayerList)
          {
-            curTarget = prospect;
-            curDistance = collision.getTime();
+         for(MovingBoundingObject prospect : playerList)
+         {
+            
+            collision = new SweptAABB(origin, distance, prospect);
+            if(collision.getTime() < 1.0 && collision.getTime() < curDistance)
+            {
+               curTarget = prospect;
+               curDistance = collision.getTime();
+            }
+         }
+      }
+      if(checkEnemyList)
+         {
+         for(MovingBoundingObject prospect : enemyList)
+         {
+            
+            collision = new SweptAABB(origin, distance, prospect);
+            if(collision.getTime() < 1.0 && collision.getTime() < curDistance)
+            {
+               curTarget = prospect;
+               curDistance = collision.getTime();
+            }
          }
       }
       // always check against environment objects
@@ -434,6 +452,7 @@ public class PhysicsUnlockedEngine implements Runnable
    }
    
    // returns the (tile imprecise) distance at which the hitscan will impact geometry.
+   // this is relative, not absolute
    public DoublePair getHitscanImpactGeometry(DoublePair origin, DoublePair distance)
    {
       double divisor = Math.max(Math.abs(distance.x), Math.abs(distance.y));
@@ -507,7 +526,7 @@ public class PhysicsUnlockedEngine implements Runnable
    }
    
    // return metric for comparing distances. This is the Pythagorean theory without taking the square root
-   private double getDistanceMetric(DoublePair boxLoc, DoublePair loc)
+   public static double getDistanceMetric(DoublePair boxLoc, DoublePair loc)
    {
       double a = boxLoc.x + .5 - loc.x;
       double b = boxLoc.y + .5 - loc.y;
