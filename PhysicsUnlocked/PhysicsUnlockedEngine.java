@@ -533,4 +533,27 @@ public class PhysicsUnlockedEngine implements Runnable
       double b = boxLoc.y + .5 - loc.y;
       return (a * a) + (b * b);
    }
+   
+   
+   public GeometryType getGeometryType(int x, int y)
+   {
+      if(!isInBounds(x, y))
+         return GeometryType.FULL;
+      return geometry[x][y];
+   }
+   
+   
+   public boolean pointCollidesWithGeometry(DoublePair point, int x, int y)
+   {
+      // false if not in box at all
+      if(point.x < x || point.x > x + 1 ||
+         point.y < y || point.y > y + 1)
+         return false;
+      switch(getGeometryType(x, y))
+      {
+         case FULL : return true;
+         case EMPTY : return false;
+      }
+      return true;
+   }
 }

@@ -40,9 +40,10 @@ s#l0
 %\011PhysicsUnlocked%sHitscanResult.java
 %\011PhysicsUnlocked%sMovingBoundingObject.java
 %\011PhysicsUnlocked%sBoundingObject.java
-!134;l
+!178;l
 %\011PhysicsUnlocked%sBoundingObjectTest.java
 %\011PhysicsUnlocked%sSweptAABBTest.java
+%\011PhysicsUnlocked%sGeometryTypeTest.java
 %\011PhysicsUnlocked%sMovingCollisionTest.java
 !513;t
 jgrJUnit0xr	%\011PhysicsUnlocked%sBoundingObjectTest.java	1697589271098:P%\011BoundingObject.java	%\011PhysicsUnlocked%sSweptAABBTest.java	1697589271098:P%\011SweptAABB.java	%\011PhysicsUnlocked%sMovingCollision.java	1697589271098:P%\011MovingCollisionTest.java	%\011PhysicsUnlocked%sSweptAABB.java	1697589271098:P%\011SweptAABBTest.java	%\011PhysicsUnlocked%sBoundingObject.java	1697589271098:P%\011BoundingObjectTest.java	%\011PhysicsUnlocked%sMovingCollisionTest.java	1697589271098:P%\011MovingCollision.java	
