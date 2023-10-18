@@ -55,11 +55,11 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
          bouncingBox[i].addCollisionListener(this);
          engine.add(bouncingBox[i], PhysicsUnlockedEngine.ENVIRONMENT);
       }
-      boolean[][] geometry = getGeometry();
+      GeometryType[][] geometry = getGeometry();
       int floorLevel = 100;
       for(int i = 2; i < geometry[0].length; i++)
       {
-         if(geometry[12][i])
+         if(geometry[12][i] == GeometryType.FULL)
          {
             floorLevel = i;
             break;
@@ -167,21 +167,39 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       super.paint(g);
       Graphics2D g2d = (Graphics2D)g;
       
-      boolean[][] geometry = engine.getGeometry();
-      
+      GeometryType[][] geometry = engine.getGeometry();
+      int drawOriginPixelsX;
+      int drawOriginPixelsY;
       // geometry
       for(int x = 0; x < geometry.length; x++)
       for(int y = 0; y < geometry[0].length; y++)
       {
-         if(geometry[x][y])
+         drawOriginPixelsX = x * tileSizePixels + inset;
+         drawOriginPixelsY = y * tileSizePixels + inset;
+         if(geometry[x][y] == GeometryType.FULL)
          {
             g2d.setColor(Color.WHITE);
+            g2d.fillRect(drawOriginPixelsX, drawOriginPixelsY, tileSizePixels, tileSizePixels);
          }
-         else
+         else if(geometry[x][y] == GeometryType.ASCENDING_FLOOR)
+         {
+            int[] xPoints = {drawOriginPixelsX, drawOriginPixelsX + tileSizePixels, drawOriginPixelsX + tileSizePixels};
+            int[] yPoints = {drawOriginPixelsY + tileSizePixels, drawOriginPixelsY + tileSizePixels, drawOriginPixelsY};
+            g2d.setColor(Color.WHITE);
+            g2d.fillPolygon(xPoints, yPoints, 3);
+         }
+         else if(geometry[x][y] == GeometryType.DESCENDING_FLOOR)
+         {
+            int[] xPoints = {drawOriginPixelsX, drawOriginPixelsX, drawOriginPixelsX + tileSizePixels};
+            int[] yPoints = {drawOriginPixelsY, drawOriginPixelsY + tileSizePixels, drawOriginPixelsY + tileSizePixels};
+            g2d.setColor(Color.WHITE);
+            g2d.fillPolygon(xPoints, yPoints, 3);
+         }
+         else // empty
          {
             g2d.setColor(Color.BLACK);
+            g2d.fillRect(drawOriginPixelsX, drawOriginPixelsY, tileSizePixels, tileSizePixels);
          }
-         g2d.fillRect(x * tileSizePixels + inset, y * tileSizePixels + inset, tileSizePixels, tileSizePixels);
       }
       
       // terrain checked
@@ -277,29 +295,44 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       
    }
    
-   public boolean[][] getGeometry()
+   public GeometryType[][] getGeometry()
    {
       int width = 40;
       int height = 30;
-      boolean[][] geometry = new boolean[width][height];
+      GeometryType[][] geometry = new GeometryType[width][height];
+      for(int x = 0; x < width; x++)
+      for(int y = 0; y < height; y++)
+         geometry[x][y] = GeometryType.EMPTY;
       for(int x = 0; x < width; x++)
       {
-         geometry[x][0] = true;
-         geometry[x][height - 1] = true;
+         geometry[x][0] = GeometryType.FULL;
+         geometry[x][height - 1] = GeometryType.FULL;
       }
       for(int y = 0; y < height - 1; y++)
       {
-         geometry[0][y] = true;
-         geometry[geometry.length - 1][y] = true;
+         geometry[0][y] = GeometryType.FULL;
+         geometry[geometry.length - 1][y] = GeometryType.FULL;
       }
       
       for(int i = 0; i < 5; i++)
       {
-         geometry[2][geometry[0].length - 4 - (i * 4)] = true;
-         geometry[3][geometry[0].length - 4 - (i * 4)] = true;
-         geometry[6][geometry[0].length - 5 - (i * 4)] = true;
-         geometry[7][geometry[0].length - 5 - (i * 4)] = true;
+         geometry[2][geometry[0].length - 4 - (i * 4)] = GeometryType.FULL;
+         geometry[3][geometry[0].length - 4 - (i * 4)] = GeometryType.FULL;
+         geometry[6][geometry[0].length - 5 - (i * 4)] = GeometryType.FULL;
+         geometry[7][geometry[0].length - 5 - (i * 4)] = GeometryType.FULL;
       }
+      
+      int xStart = width / 2;
+      int y = geometry[0].length - 2;
+      geometry[xStart][y] = GeometryType.ASCENDING_FLOOR;
+      geometry[xStart + 1][y] = GeometryType.FULL;
+      geometry[xStart + 2][y] = GeometryType.FULL;
+      geometry[xStart + 3][y] = GeometryType.DESCENDING_FLOOR;
+      xStart += 6;
+      geometry[xStart][y] = GeometryType.ASCENDING_FLOOR;
+      geometry[xStart + 1][y] = GeometryType.FULL;
+      geometry[xStart + 1][y - 1] = GeometryType.FULL;
+      
       return geometry;
    }
    

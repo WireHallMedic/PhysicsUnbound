@@ -34,7 +34,7 @@ public class PhysicsUnlockedEngine implements Runnable
    private boolean terminateFlag;
    private Thread thread;
    private int cps;
-   private boolean[][] geometry;
+   private GeometryType[][] geometry;
 
 
 	public double getGravity(){return gravity;}
@@ -42,14 +42,14 @@ public class PhysicsUnlockedEngine implements Runnable
    public Vector<MovingBoundingObject> getObjList(){return objList;}
    public boolean getRunFlag(){return runFlag;}
    public int getCPS(){return cps;}
-   public boolean[][] getGeometry(){return geometry;}
+   public GeometryType[][] getGeometry(){return geometry;}
 
 
 	public void setGravity(double g){gravity = g;}
 	public void setTerminalVelocity(double t){terminalVelocity = t;}
    public void setObjList(Vector<MovingBoundingObject> newList){objList = newList;}
    public void setRunFlag(boolean rf){runFlag = rf;}
-   public void setGeometry(boolean[][] g){geometry = g;}
+   public void setGeometry(GeometryType[][] g){geometry = g;}
    public void terminate(){terminateFlag = true;}           // mainly for testing
 
    // standard constructor
@@ -62,7 +62,8 @@ public class PhysicsUnlockedEngine implements Runnable
       enemyProjectileList = new Vector<MovingBoundingObject>();
       environmentList = new Vector<MovingBoundingObject>();
       runFlag = false;
-      geometry = new boolean[1][1];
+      geometry = new GeometryType[1][1];
+      geometry[0][0] = GeometryType.EMPTY;
       thread = new Thread(this);
       thread.start();
    }
@@ -155,7 +156,7 @@ public class PhysicsUnlockedEngine implements Runnable
                {
                   if(isInBounds(x, y))
                   {
-                     if(geometry[x][y])
+                     if(geometry[x][y] == GeometryType.FULL)
                         prospectList.add(new DoublePair((double)x, (double)y));
                   }
                   else
@@ -470,7 +471,7 @@ public class PhysicsUnlockedEngine implements Runnable
       {
          xLoc = (int)(origin.x + (xStep * i));
          yLoc = (int)(origin.y + (yStep * i));
-         if(!isInBounds(xLoc, yLoc) || geometry[xLoc][yLoc])
+         if(!isInBounds(xLoc, yLoc) || geometry[xLoc][yLoc] == GeometryType.FULL)
             return new DoublePair(xStep * i, yStep * i);
       }
       return distance;
@@ -488,7 +489,7 @@ public class PhysicsUnlockedEngine implements Runnable
    private boolean collisionCheckGeometry(int x, int y, MovingBoundingObject obj, double xShift, double yShift)
    {
       // in bounds, but not a solid tile
-      if(isInBounds(x, y) && !geometry[x][y])
+      if(isInBounds(x, y) && geometry[x][y] == GeometryType.EMPTY)
          return false;
       
       // OOB or solid tile

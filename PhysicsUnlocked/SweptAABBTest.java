@@ -219,7 +219,7 @@ public class SweptAABBTest
    private PhysicsUnlockedEngine engineSetUp() 
    {
       engine = new PhysicsUnlockedEngine();
-      boolean[][] geometry = new boolean[10][10];
+      GeometryType[][] geometry = new boolean[10][10];
       for(int i = 0; i < 10; i++)
       {
          geometry[0][i] = true;
