@@ -9,7 +9,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private JFrame frame;
    private PhysicsUnlockedEngine engine;
    private BoundingBox box;
-   private BoundingBox[] bouncingBox;
+   private BouncyBox[] bouncingBox;
    private BoundingBox launchBox;
    private FollowingBB shield1;
    private FollowingBB shield2;
@@ -32,7 +32,8 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    // play around with toggling these
    private boolean topDown = false;
    private boolean showTerrainChecked = false;
-   private int bouncingBlockCount = 50;
+   private int bouncingBlockCount = 100;
+   private boolean bouncingBoxesCollide = false;
    
 
    public PUTest()
@@ -44,18 +45,15 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       box.setXMaxSpeed(walkSpeed);
       engine.add(box, PhysicsUnlockedEngine.PLAYER);
       
-      bouncingBox = new BoundingBox[bouncingBlockCount];
+      bouncingBox = new BouncyBox[bouncingBlockCount];
       for(int i = 0; i < bouncingBox.length; i++)
       {
-         bouncingBox[i] = new BoundingBox(.75, .75);
+         bouncingBox[i] = new BouncyBox(.75, .75);
          double x = 12.0 + (i % 20);
          double y = 3.0 + (i / 20);
          bouncingBox[i].setLoc(x, y);
-         bouncingBox[i].setAffectedByGravity(false);
-         bouncingBox[i].setPushedByGeometry(false);
-         bouncingBox[i].setSpeed(5.0 + (Math.random() * 5.0), 5.0 + (Math.random() * 5.0));
          bouncingBox[i].addCollisionListener(this);
-         engine.add(bouncingBox[i], PhysicsUnlockedEngine.ENEMY);
+         engine.add(bouncingBox[i], PhysicsUnlockedEngine.ENVIRONMENT);
       }
       boolean[][] geometry = getGeometry();
       int floorLevel = 100;
@@ -153,7 +151,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       }
          
       // set shield location
-      double rotation = (timeCounter % 30) / 30.0;
+      double rotation = (timeCounter % 20) / 20.0;
       double angle = DoublePair.FULL_CIRCLE - (DoublePair.FULL_CIRCLE * rotation);
       shield1.setRelativeLoc(DoublePair.getFromAngle(angle));
       shield2.setRelativeLoc(DoublePair.getFromAngle(DoublePair.simplifyAngle(angle + (DoublePair.FULL_CIRCLE / 3))));
@@ -287,7 +285,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       for(int x = 0; x < width; x++)
       {
          geometry[x][0] = true;
-         geometry[x][height - 2] = true;
+         geometry[x][height - 1] = true;
       }
       for(int y = 0; y < height - 1; y++)
       {
@@ -297,10 +295,10 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       
       for(int i = 0; i < 5; i++)
       {
-         geometry[2][geometry[0].length - 5 - (i * 4)] = true;
-         geometry[3][geometry[0].length - 5 - (i * 4)] = true;
-         geometry[6][geometry[0].length - 7 - (i * 4)] = true;
-         geometry[7][geometry[0].length - 7 - (i * 4)] = true;
+         geometry[2][geometry[0].length - 4 - (i * 4)] = true;
+         geometry[3][geometry[0].length - 4 - (i * 4)] = true;
+         geometry[6][geometry[0].length - 5 - (i * 4)] = true;
+         geometry[7][geometry[0].length - 5 - (i * 4)] = true;
       }
       return geometry;
    }
@@ -311,15 +309,30 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       MovingBoundingObject subj = mc.getOtherObject();
       
       // bouncing boxes
-      DoublePair normalPair = engine.getOrthoGeometryCollisionNormals(obj);
-      if(normalPair.x != 0.0)
-         obj.setXSpeed(Math.abs(obj.getXSpeed()) * normalPair.x);
-      if(normalPair.y != 0.0)
-         obj.setYSpeed(Math.abs(obj.getYSpeed()) * normalPair.y);
-      if(subj == box)
+      if(subj == null)
       {
-         collisionIndicationCounter = 10;
-         lastHitBox = obj;
+         DoublePair normalPair = engine.getOrthoGeometryCollisionNormals(obj);
+         if(normalPair.x != 0.0)
+            obj.setXSpeed(Math.abs(obj.getXSpeed()) * normalPair.x);
+         if(normalPair.y != 0.0)
+            obj.setYSpeed(Math.abs(obj.getYSpeed()) * normalPair.y);
+      }
+      else
+      {
+         if(subj == box)
+         {
+            collisionIndicationCounter = 10;
+            lastHitBox = obj;
+         }
+         else if(bouncingBoxesCollide && obj instanceof BouncyBox && subj instanceof BouncyBox)
+         {
+            // we only need to handle one, because two collisions are generated
+            double speed = subj.getSpeed().getMagnitude();
+            DoublePair diff = DoublePair.difference(subj.getLoc(), obj.getLoc());
+            subj.setSpeed(DoublePair.getFromAngle(diff.getAngle()));
+            subj.setXSpeed(subj.getXSpeed() * speed);
+            subj.setYSpeed(subj.getYSpeed() * speed);
+         }
       }
       
       // launch box
@@ -358,5 +371,16 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       timer.start();
       
       testPanel.engine.setRunFlag(true);
+   }
+   
+   private class BouncyBox extends BoundingBox
+   {
+      public BouncyBox(double w, double h)
+      {
+         super(w, h);
+         setAffectedByGravity(false);
+         setPushedByGeometry(false);
+         setSpeed(5.0 + (Math.random() * 5.0), 5.0 + (Math.random() * 5.0));
+      }
    }
 }
