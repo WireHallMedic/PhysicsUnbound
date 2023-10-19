@@ -42,8 +42,9 @@ s#l0
 %\011PhysicsUnlocked%sHitscanResult.java
 %\011PhysicsUnlocked%sMovingBoundingObject.java
 %\011PhysicsUnlocked%sBoundingObject.java
-!178;l
+!214;l
 %\011PhysicsUnlocked%sBoundingObjectTest.java
+%\011PhysicsUnlocked%sLineTest.java
 %\011PhysicsUnlocked%sSweptAABBTest.java
 %\011PhysicsUnlocked%sGeometryTypeTest.java
 %\011PhysicsUnlocked%sMovingCollisionTest.java
