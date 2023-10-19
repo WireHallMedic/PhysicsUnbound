@@ -66,5 +66,8 @@ public class LineTest
       
       loc.rotate(-fullCircle);
       Assert.assertEquals("Rotation normalizes angles below 0.0", eighthCircle, loc.getAngle(), .001);
+      
+      DoublePair loc2 = new DoublePair(1.0, 1.0);
+      System.out.println(loc2.getAngle());
    }
 }
