@@ -24,13 +24,16 @@ public class MovingCollisionTest
    {
       listener = new TestCollisionListener();
       engine = new PhysicsUnlockedEngine();
-      boolean[][] geometry = new boolean[10][10];
+      GeometryType[][] geometry = new GeometryType[10][10];
+      for(int x = 0; x < geometry.length; x++)
+      for(int y = 0; y < geometry[0].length; y++)
+         geometry[x][y] = GeometryType.EMPTY;
       for(int i = 0; i < 10; i++)
       {
-         geometry[0][i] = true;
-         geometry[9][i] = true;
-         geometry[i][0] = true;
-         geometry[i][9] = true;
+         geometry[0][i] = GeometryType.FULL;
+         geometry[9][i] = GeometryType.FULL;
+         geometry[i][0] = GeometryType.FULL;
+         geometry[i][9] = GeometryType.FULL;
       }
       engine.setGeometry(geometry);
       
