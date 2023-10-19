@@ -16,8 +16,7 @@ public class LineTest
    }
 
 
-   /** A test that always fails. **/
-   @Test public void defaultTest() 
+   @Test public void lineTesting() 
    {
       DoublePair origin = new DoublePair(0.0, 1.0);
       DoublePair slope = new DoublePair(-1.0, 1.0);
@@ -41,5 +40,10 @@ public class LineTest
       Line lineC = new Line(origin, slope);
       Assert.assertFalse("Parallel lines do not have intersection", lineB.hasIntersection(lineC));
       
+      DoublePair pointA = new DoublePair(5.0, 5.0);
+      DoublePair pointB = new DoublePair(10.0, 10.0);
+      Line lineD = Line.getFromPoints(pointA, pointB);
+      Assert.assertEquals("Line generated from points has expected slope", 1.0, lineD.getSlope(), .001);
+      Assert.assertTrue("Line generated from points has point", pointA.equals(lineD.getPoint()));
    }
 }

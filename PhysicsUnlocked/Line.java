@@ -26,6 +26,11 @@ public class Line
       b = origin.y - (m * origin.x);
    }
    
+   public static Line getFromPoints(DoublePair pointA, DoublePair pointB)
+   {
+      return new Line(pointA, new DoublePair(pointB.x - pointA.x, pointB.y - pointA.y));
+   }
+   
    @Override
    public String toString()
    {
