@@ -545,9 +545,11 @@ public class PhysicsUnlockedEngine implements Runnable
    
    public boolean pointCollidesWithGeometry(DoublePair point, int x, int y)
    {
+      double xLoc = point.x - x;
+      double yLoc = point.y - y;
       // false if not in box at all
-      if(point.x < x || point.x > x + 1 ||
-         point.y < y || point.y > y + 1)
+      if(xLoc < 0.0 || xLoc > 1.0 ||
+         yLoc < 0.0 || yLoc > 1.0)
          return false;
       switch(getGeometryType(x, y))
       {

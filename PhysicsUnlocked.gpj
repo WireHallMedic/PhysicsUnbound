@@ -12,11 +12,12 @@ s#i0
 s#k0
 s#j0
 s#l0
-!545;g
+!577;g
 %\011PhysicsUnlocked%sDoublePair.java
 %\011PhysicsUnlocked%sBoundingBox.java
 %\011PhysicsUnlocked%sPhysicsUnlockedEngine.java
 %\011PhysicsUnlocked%sFollowingBB.java
+%\011PhysicsUnlocked%sLine.java
 %\011PhysicsUnlocked%sGeometryType.java
 %\011PhysicsUnlocked%sSweptAABB.java
 %\011PhysicsUnlocked%sMovingCollisionListener.java
@@ -26,11 +27,12 @@ s#l0
 %\011PhysicsUnlocked%sHitscanResult.java
 %\011PhysicsUnlocked%sMovingBoundingObject.java
 %\011PhysicsUnlocked%sBoundingObject.java
-!545;f
+!577;f
 %\011PhysicsUnlocked%sDoublePair.java
 %\011PhysicsUnlocked%sBoundingBox.java
 %\011PhysicsUnlocked%sPhysicsUnlockedEngine.java
 %\011PhysicsUnlocked%sFollowingBB.java
+%\011PhysicsUnlocked%sLine.java
 %\011PhysicsUnlocked%sGeometryType.java
 %\011PhysicsUnlocked%sSweptAABB.java
 %\011PhysicsUnlocked%sMovingCollisionListener.java
