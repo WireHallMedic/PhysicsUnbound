@@ -47,16 +47,12 @@ public class SweptAABB
          doAngledCheck(point, distance, boxOrigin, boxSize, type);
    }
    
-   public SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj){this(point, distance, obj, GeometryType.FULL);}
-   public SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj, GeometryType type)
+   public SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj)
    {
       DoublePair boxOrigin = obj.getLoc();
       boxOrigin.x -= obj.getHalfWidth();
       boxOrigin.y -= obj.getHalfHeight();
-      if(type == GeometryType.FULL)
-         doCheck(point, distance, boxOrigin, new DoublePair(obj.getWidth(), obj.getHeight()));
-      else
-         doAngledCheck(point, distance, boxOrigin, new DoublePair(obj.getWidth(), obj.getHeight()), type);
+      doCheck(point, distance, boxOrigin, new DoublePair(obj.getWidth(), obj.getHeight()));
    }
    
    public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY){this(obj, secondsElapsed, geometryX, geometryY, GeometryType.FULL);}
@@ -195,6 +191,8 @@ public class SweptAABB
       DoublePair boxCenter = new DoublePair(boxOrigin.x + (boxSize.x / 2), boxOrigin.y + (boxSize.y / 2));
       Line movingLine = new Line(point, distance);
       Line geometryLine = new Line(boxCenter, type.getSlope());
+      
+      
       // no collision if lines never intersect (movement is parallel to slope)
       if(!movingLine.hasIntersection(geometryLine))
          return;
@@ -211,6 +209,7 @@ public class SweptAABB
          distToCollision.subtract(point);
          collision = true;
          time = distance.getMagnitude() / distToCollision.getMagnitude();
+         collisionLoc = new DoublePair(intersection);
          
          // set normals
          if(type == GeometryType.ASCENDING_FLOOR || type == GeometryType.DESCENDING_FLOOR)

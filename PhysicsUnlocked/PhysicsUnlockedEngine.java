@@ -156,7 +156,7 @@ public class PhysicsUnlockedEngine implements Runnable
                {
                   if(isInBounds(x, y))
                   {
-                     if(geometry[x][y] == GeometryType.FULL)
+                     if(geometry[x][y] != GeometryType.EMPTY)
                         prospectList.add(new DoublePair((double)x, (double)y));
                   }
                   else
@@ -169,7 +169,7 @@ public class PhysicsUnlockedEngine implements Runnable
                // resolve each potential collision in order
                for(DoublePair dPair : prospectList)   
                {
-                  SweptAABB newCollision = new SweptAABB(obj, secondsElapsed, (int)dPair.x, (int)dPair.y);
+                  SweptAABB newCollision = new SweptAABB(obj, secondsElapsed, (int)dPair.x, (int)dPair.y, getGeometryType((int)dPair.x, (int)dPair.y));
                   if(newCollision.isCollision())
                   {
                      obj.adjustForCollision(newCollision);

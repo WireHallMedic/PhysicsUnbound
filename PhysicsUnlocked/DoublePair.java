@@ -88,7 +88,7 @@ public class DoublePair
       return Math.sqrt( (x * x) + (y * y) );
    }
    
-   public boolean equals(DoublePair that){return equals(that, .0001);}
+   public boolean equals(DoublePair that){return equals(that, .001);}
    public boolean equals(DoublePair that, double threshold)
    {
       return Math.abs(this.x - that.x) < threshold &&

@@ -157,11 +157,6 @@ public class SweptAABBTest
       origin = new DoublePair(7.0, 4.0);
       distance = new DoublePair(-10.0, 0.0);
       hitObject = engine.getHitscanImpact(origin, distance, engine.PLAYER_PROJECTILE);
-    //   if(hitObject == player)System.out.println("Player");
-//       if(hitObject == enemy)System.out.println("Enemy");
-//       if(hitObject == playerProjectile)System.out.println("Player Proj");
-//       if(hitObject == enemyProjectile)System.out.println("Enemy Proj");
-//       if(hitObject == environmental)System.out.println("Env");
       assertEquals("Player projectile ignores enemy projectile and hits enemy", enemy, hitObject);
       
       hitObject = null;
@@ -214,6 +209,34 @@ public class SweptAABBTest
       assertTrue("MovingObject hit hitscan registers as MovingObject", result.isMovingObjectImpact());
       assertTrue("Hitscan hits expected target", expectedPoI.equals(result.getPointOfImpact()));
       assertEquals("MovingObject hit hitscan returns correct MovingObject", player, result.getMovingObject());
+   }
+   
+   @Test public void slopeTest()
+   {
+      DoublePair point = new DoublePair(0.5, 0.0);
+      DoublePair distance = new DoublePair(0.0, 5.0);
+      DoublePair boxOrigin = new DoublePair(0.0, 2.0);
+      DoublePair boxSize = new DoublePair(1.0, 1.0);
+      DoublePair expectedImpact = new DoublePair(.5, 2.5);
+      SweptAABB collision = new SweptAABB(point, distance, boxOrigin, boxSize, GeometryType.ASCENDING_FLOOR);
+      assertTrue("Collision at expected point", expectedImpact.equals(collision.getCollisionLoc()));
+      
+      point = new DoublePair(0.0, 2.5);
+      distance = new DoublePair(5.0, 0.0);
+      collision = new SweptAABB(point, distance, boxOrigin, boxSize, GeometryType.ASCENDING_FLOOR);
+      assertTrue("Collision at expected point", expectedImpact.equals(collision.getCollisionLoc()));
+      
+      point = new DoublePair(5.0, 2.5);
+      distance = new DoublePair(-5.0, 0.0);
+      expectedImpact = new DoublePair(.5, 3.0);
+      collision = new SweptAABB(point, distance, boxOrigin, boxSize, GeometryType.ASCENDING_FLOOR);
+      assertTrue("Collision at expected point", expectedImpact.equals(collision.getCollisionLoc()));
+      
+      point = new DoublePair(0.5, 5.0);
+      distance = new DoublePair(0.0, -5.0);
+      expectedImpact = new DoublePair(1.0, 2.5);
+      collision = new SweptAABB(point, distance, boxOrigin, boxSize, GeometryType.ASCENDING_FLOOR);
+      assertTrue("Collision at expected point", expectedImpact.equals(collision.getCollisionLoc()));
    }
    
    private PhysicsUnlockedEngine engineSetUp() 
