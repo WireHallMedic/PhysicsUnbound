@@ -53,6 +53,18 @@ public class DoublePair
       return serialize();
    }
    
+   // rotates this point relative to 0.0, 0.0
+   public void rotate(double theta)
+   {
+      double newAngle = getAngle() + theta;
+      double magnitude = getMagnitude();
+      DoublePair newValues = getFromAngle(simplifyAngle(newAngle));
+      newValues.x *= magnitude;
+      newValues.y *= magnitude;
+      this.x = newValues.x;
+      this.y = newValues.y;
+   }
+   
    // returns the angle to the Cartesian coordinates of this pair
    public double getAngle()
    {

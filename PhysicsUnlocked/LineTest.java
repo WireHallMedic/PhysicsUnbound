@@ -46,4 +46,25 @@ public class LineTest
       Assert.assertEquals("Line generated from points has expected slope", 1.0, lineD.getSlope(), .001);
       Assert.assertTrue("Line generated from points has point", pointA.equals(lineD.getPoint()));
    }
+   
+   @Test public void rotationTest()
+   {
+      double eighthCircle = DoublePair.QUARTER_CIRCLE / 2;
+      double fullCircle = DoublePair.HALF_CIRCLE + DoublePair.HALF_CIRCLE;
+      DoublePair loc = new DoublePair(1.0, 0.0);
+      Assert.assertEquals("Origin to point is angle 0.0", 0.0, loc.getAngle(), .001);
+      Assert.assertEquals("Origin to point is magnitude 1.0", 1.0, loc.getMagnitude(), .001);
+      loc.rotate(eighthCircle);
+      
+      Assert.assertEquals("Origin to rotated point is angle .25 pi", eighthCircle, loc.getAngle(), .001);
+      Assert.assertEquals("Origin to rotated point is magnitude 1.0", 1.0, loc.getMagnitude(), .001);
+      Assert.assertEquals("Rotated point.x is .707", .707, loc.x, .001);
+      Assert.assertEquals("Rotated point.y is -.707", -.707, loc.y, .001);
+      
+      loc.rotate(fullCircle);
+      Assert.assertEquals("Rotation normalizes angles more than a full circle", eighthCircle, loc.getAngle(), .001);
+      
+      loc.rotate(-fullCircle);
+      Assert.assertEquals("Rotation normalizes angles below 0.0", eighthCircle, loc.getAngle(), .001);
+   }
 }
