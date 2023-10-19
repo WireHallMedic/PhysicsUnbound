@@ -13,8 +13,8 @@ public enum GeometryType
    ASCENDING_CEILING,
    DESCENDING_CEILING;
    
-   private static final double ASCENDING_ANGLE = Math.PI / 4.0;
-   private static final double DESCENDING_ANGLE = (Math.PI * 2) - (Math.PI / 4.0);
+   private static final double ASCENDING_ANGLE = 1.0;
+   private static final double DESCENDING_ANGLE = -1.0;
    
    // returns the height of the slope at x
    public double getYFromX(double x)
