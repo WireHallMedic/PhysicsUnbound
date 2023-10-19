@@ -38,25 +38,37 @@ public class SweptAABB
       collisionLoc = null;
    }
    
-   public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize)
+   public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize){this(point, distance, boxOrigin, boxSize, GeometryType.FULL);}
+   public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
    {
-      doCheck(point, distance, boxOrigin, boxSize);
+      if(type == GeometryType.FULL)
+         doCheck(point, distance, boxOrigin, boxSize);
+      else
+         doAngledCheck(point, distance, boxOrigin, boxSize, type);
    }
    
-   public SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj)
+   public SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj){this(point, distance, obj, GeometryType.FULL);}
+   public SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj, GeometryType type)
    {
       DoublePair boxOrigin = obj.getLoc();
       boxOrigin.x -= obj.getHalfWidth();
       boxOrigin.y -= obj.getHalfHeight();
-      doCheck(point, distance, boxOrigin, new DoublePair(obj.getWidth(), obj.getHeight()));
+      if(type == GeometryType.FULL)
+         doCheck(point, distance, boxOrigin, new DoublePair(obj.getWidth(), obj.getHeight()));
+      else
+         doAngledCheck(point, distance, boxOrigin, new DoublePair(obj.getWidth(), obj.getHeight()), type);
    }
    
-   public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY)
+   public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY){this(obj, secondsElapsed, geometryX, geometryY, GeometryType.FULL);}
+   public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY, GeometryType type)
    {
       DoublePair boxOrigin = new DoublePair((1.0 * geometryX) - obj.getHalfWidth(), (1.0 * geometryY) - obj.getHalfHeight());
       DoublePair boxSize = new DoublePair(1.0 + obj.getWidth(), 1.0 + obj.getHeight());
       DoublePair distance = new DoublePair(obj.getSpeed().x * secondsElapsed, obj.getSpeed().y * secondsElapsed);
-      doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
+      if(type == GeometryType.FULL)
+         doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
+      else
+         doAngledCheck(obj.getLoc(), distance, boxOrigin, boxSize, type);
    }
    
    // for hitscan
@@ -173,14 +185,47 @@ public class SweptAABB
    // do all the work, but for triangles
    private void doAngledCheck(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
    {
+      // check if we should treat as box or slope
       normalX = 0;
       normalY = 0;
       time = 1.0;
       collision = false;
       
-      DoublePair boxCenter = new DoublePair(boxOrigin.x + .5, boxOrigin.y + .5);
+      // determine lines
+      DoublePair boxCenter = new DoublePair(boxOrigin.x + (boxSize.x / 2), boxOrigin.y + (boxSize.y / 2));
       Line movingLine = new Line(point, distance);
-      Line geometryLine = new Line(boxCenter, 
+      Line geometryLine = new Line(boxCenter, type.getSlope());
+      // no collision if lines never intersect (movement is parallel to slope)
+      if(!movingLine.hasIntersection(geometryLine))
+         return;
+      DoublePair intersection = movingLine.getIntersection(geometryLine);
+      double minX = Math.min(point.x, point.x + distance.x);
+      double minY = Math.min(point.y, point.y + distance.y);
+      double maxX = Math.max(point.x, point.x + distance.x);
+      double maxY = Math.max(point.y, point.y + distance.y);
+      // check if intersection occurs within distance
+      if(intersection.x >= minX && intersection.x <= maxX &&
+         intersection.y >= minY && intersection.y <= maxY)
+      {
+         DoublePair distToCollision = new DoublePair(intersection);
+         distToCollision.subtract(point);
+         collision = true;
+         time = distance.getMagnitude() / distToCollision.getMagnitude();
+         
+         // set normals
+         if(type == GeometryType.ASCENDING_FLOOR || type == GeometryType.DESCENDING_FLOOR)
+            if(distance.y > 0.0)
+               normalY = -1;
+         if(type == GeometryType.ASCENDING_CEILING || type == GeometryType.DESCENDING_CEILING)
+            if(distance.y < 0.0)
+               normalY = 1;
+         if(type == GeometryType.ASCENDING_FLOOR || type == GeometryType.DESCENDING_CEILING)
+            if(distance.x > 0.0)
+               normalX = -1;
+         if(type == GeometryType.ASCENDING_CEILING || type == GeometryType.ASCENDING_FLOOR)
+            if(distance.x < 0.0)
+               normalX = 1;
+      }
    }
    
    public String serialize()
