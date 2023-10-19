@@ -169,6 +169,19 @@ public class SweptAABB
          collision = true;
       }
    }
+
+   // do all the work, but for triangles
+   private void doAngledCheck(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
+   {
+      normalX = 0;
+      normalY = 0;
+      time = 1.0;
+      collision = false;
+      
+      DoublePair boxCenter = new DoublePair(boxOrigin.x + .5, boxOrigin.y + .5);
+      Line movingLine = new Line(point, distance);
+      Line geometryLine = new Line(boxCenter, 
+   }
    
    public String serialize()
    {
