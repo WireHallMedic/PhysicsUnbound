@@ -141,56 +141,43 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
       DoublePair spdAdj = new DoublePair();
       double remainingTime = 1.0 - collision.getTime();
       
-      // rotate to make angle 0.0, set normals
+      // rotate to make angle 0.0, we don't need normals because we know there's only a y collision
       if(geoType.isAngled())
       {
-         int normalX = 0;
-         int normalY = 0;
          switch(geoType)
          {
             case ASCENDING_FLOOR :     spd.rotate(-DoublePair.EIGHTH_CIRCLE);
-                                       normalY = -1;
                                        break;
             case DESCENDING_FLOOR :    spd.rotate(DoublePair.EIGHTH_CIRCLE);
-                                       normalY = -1;
                                        break;
             case ASCENDING_CEILING :   spd.rotate(-DoublePair.EIGHTH_CIRCLE);
-                                       normalY = 1;
                                        break;
             case DESCENDING_CEILING :  spd.rotate(DoublePair.EIGHTH_CIRCLE);
-                                       normalY = 1;
                                        break;
          
          }
-         spdAdj.x = Math.abs(spd.x) * normalX;
-         spdAdj.y = Math.abs(spd.y) * normalY;
+         spd.y = 0.0;
          
          // rotate back
          switch(geoType)
          {
             case ASCENDING_FLOOR :     spd.rotate(DoublePair.EIGHTH_CIRCLE);
-                                       spdAdj.rotate(DoublePair.EIGHTH_CIRCLE);
                                        break;
-            case DESCENDING_FLOOR :    spd.rotate(-DoublePair.EIGHTH_CIRCLE); 
-                                       spdAdj.rotate(-DoublePair.EIGHTH_CIRCLE);
+            case DESCENDING_FLOOR :    spd.rotate(-DoublePair.EIGHTH_CIRCLE);
                                        break;
             case ASCENDING_CEILING :   spd.rotate(DoublePair.EIGHTH_CIRCLE);
-                                       spdAdj.rotate(DoublePair.EIGHTH_CIRCLE);
                                        break;
-            case DESCENDING_CEILING :  spd.rotate(-DoublePair.EIGHTH_CIRCLE); 
-                                       spdAdj.rotate(-DoublePair.EIGHTH_CIRCLE);
+            case DESCENDING_CEILING :  spd.rotate(-DoublePair.EIGHTH_CIRCLE);
                                        break;
          }
          
-         setXSpeed(spd.x + spdAdj.x);
-         setYSpeed(spd.y + spdAdj.y);
+         setXSpeed(spd.x);
+         setYSpeed(spd.y);
       }
       else
       {
-         spdAdj.x = Math.abs(spd.x) * collision.getNormalX();
-         spdAdj.y = Math.abs(spd.y) * collision.getNormalY();
-         setXSpeed(spd.x + spdAdj.x);
-         setYSpeed(spd.y + spdAdj.y);
+         setXSpeed(spd.x + (Math.abs(spd.x) * collision.getNormalX()));
+         setYSpeed(spd.y + (Math.abs(spd.y) * collision.getNormalY()));
       }
    }
    
