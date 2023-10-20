@@ -363,6 +363,11 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       geometry[10][6] = GeometryType.DESCENDING_CEILING;
       geometry[11][6] = GeometryType.ASCENDING_CEILING;
       
+      geometry[15][5] = GeometryType.ASCENDING_FLOOR;
+      geometry[18][5] = GeometryType.DESCENDING_FLOOR;
+      geometry[15][8] = GeometryType.DESCENDING_CEILING;
+      geometry[18][8] = GeometryType.ASCENDING_CEILING;
+      
       
       xStart += 6;
       geometry[xStart][y] = GeometryType.ASCENDING_FLOOR;

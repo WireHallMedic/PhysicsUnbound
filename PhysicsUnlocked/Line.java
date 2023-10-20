@@ -79,4 +79,16 @@ public class Line
       double[] answer = {m, -1.0, -b};
       return answer;
    }
+   
+   public boolean pointIsBelow(DoublePair thatPoint)
+   {
+      double y = (m * thatPoint.x) + b;
+      return y > thatPoint.y;
+   }
+   
+   public boolean pointIsAbove(DoublePair thatPoint)
+   {
+      double y = (m * thatPoint.x) + b;
+      return y < thatPoint.y;
+   }
 }
