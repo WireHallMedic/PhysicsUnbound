@@ -71,8 +71,9 @@ public class SweptAABB
       }
       else
       {
-         // get the corner we're going to use
+         boolean doBoxCheck = false;
          DoublePair point = obj.getLoc();
+         // get the corner we're going to use
          switch(type)
          {
             case ASCENDING_FLOOR :     point.x += obj.getHalfWidth(); point.y += obj.getHalfHeight(); break;
@@ -80,9 +81,33 @@ public class SweptAABB
             case DESCENDING_FLOOR :    point.x -= obj.getHalfWidth(); point.y += obj.getHalfHeight(); break;
             case DESCENDING_CEILING :  point.x += obj.getHalfWidth(); point.y -= obj.getHalfHeight(); break;
          }
+         // see if we should treat slope tile as box
+         DoublePair lineOrigin = new DoublePair(geometryX + .5, geometryY + .5);
+         Line geometryLine = new Line(lineOrigin, type.getSlope());
+         
+         // if the point is on the wrong side of the geometryLine, check as if this were a box
+  //        if(type == GeometryType.ASCENDING_FLOOR || type == GeometryType.DESCENDING_FLOOR)
+//          {
+//             if(geometryLine.pointIsBelow(point))
+//             {
+//                doBoxCheck = true;
+//             }
+//          }
+//          if(type == GeometryType.ASCENDING_CEILING || type == GeometryType.DESCENDING_CEILING)
+//          {
+//             if(geometryLine.pointIsAbove(point))
+//                doBoxCheck = true;
+//          }
+//          
          // if the lines intersect outside the box, we should treat it like GeometryType.FULL
          if(!doAngledCheck(point, distance, boxOrigin, boxSize, type))
+         {System.out.println("False returned");
+            doBoxCheck = true;
+         }
+         
+         if(doBoxCheck)
          {
+            System.out.println("Doing box check");
             boxOrigin.x -= obj.getHalfWidth();
             boxOrigin.y -= obj.getHalfHeight();
             boxSize.x += obj.getWidth();
@@ -217,18 +242,19 @@ public class SweptAABB
       DoublePair boxCenter = new DoublePair(boxOrigin.x + (boxSize.x / 2), boxOrigin.y + (boxSize.y / 2));
       Line movingLine = new Line(point, distance);
       Line geometryLine = new Line(boxCenter, type.getSlope());
-      
-      // no collision if lines never intersect (movement is parallel to slope)
-      if(!movingLine.hasIntersection(geometryLine))
-         return true;
          
       DoublePair intersection = movingLine.getIntersection(geometryLine);
       
       // alert caller to run box check if intersection not in bounds of this tile
       if(intersection.x < boxOrigin.x || intersection.x > boxOrigin.x + boxSize.x ||
          intersection.y < boxOrigin.y || intersection.y > boxOrigin.y + boxSize.y)
+      {System.out.println("Intersection not in box");
          return false;
+      }
       
+      // no collision if lines never intersect (movement is parallel to slope)
+      if(!movingLine.hasIntersection(geometryLine))
+         return true;
       
       // check if intersection occurs within distance
       double minX = Math.min(point.x, point.x + distance.x);

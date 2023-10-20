@@ -67,4 +67,17 @@ public class LineTest
       loc.rotate(-fullCircle);
       Assert.assertEquals("Rotation normalizes angles below 0.0", eighthCircle, loc.getAngle(), .001);
    }
+   
+   @Test public void relativeLocationTest()
+   {
+      DoublePair pointA = new DoublePair(5.0, 5.0);
+      DoublePair slope = new DoublePair(1.0, 1.0);
+      DoublePair pointB = new DoublePair(5.0, 4.0);
+      DoublePair pointC = new DoublePair(5.0, 6.0);
+      Line line = new Line(pointA, slope);
+      assertFalse("Point on line is not above line", line.pointIsAbove(pointA));
+      assertFalse("Point on line is not below line", line.pointIsBelow(pointA));
+      assertTrue("Point above line is above line", line.pointIsAbove(pointB));
+      assertTrue("Point below line is below line", line.pointIsBelow(pointC));
+   }
 }
