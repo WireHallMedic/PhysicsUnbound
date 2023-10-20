@@ -41,7 +41,7 @@ public class SweptAABB
    public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize){this(point, distance, boxOrigin, boxSize, GeometryType.FULL);}
    public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
    {
-      if(type == GeometryType.FULL)
+      if(!type.isAngled())
          doCheck(point, distance, boxOrigin, boxSize);
       else
          doAngledCheck(point, distance, boxOrigin, boxSize, type);
@@ -61,10 +61,23 @@ public class SweptAABB
       DoublePair boxOrigin = new DoublePair((1.0 * geometryX) - obj.getHalfWidth(), (1.0 * geometryY) - obj.getHalfHeight());
       DoublePair boxSize = new DoublePair(1.0 + obj.getWidth(), 1.0 + obj.getHeight());
       DoublePair distance = new DoublePair(obj.getSpeed().x * secondsElapsed, obj.getSpeed().y * secondsElapsed);
-      if(type == GeometryType.FULL)
+      if(!type.isAngled())
+      {
          doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
+      }
       else
-         doAngledCheck(obj.getLoc(), distance, boxOrigin, boxSize, type);
+      {
+         // get the corner we're going to use
+         DoublePair point = obj.getLoc();
+         switch(type)
+         {
+            case ASCENDING_FLOOR :     point.x += obj.getHalfWidth(); point.y += obj.getHalfHeight(); break;
+            case ASCENDING_CEILING :   point.x -= obj.getHalfWidth(); point.y -= obj.getHalfHeight(); break;
+            case DESCENDING_FLOOR :    point.x -= obj.getHalfWidth(); point.y += obj.getHalfHeight(); break;
+            case DESCENDING_CEILING :  point.x += obj.getHalfWidth(); point.y -= obj.getHalfHeight(); break;
+         }
+         doAngledCheck(point, distance, boxOrigin, boxSize, type);
+      }
    }
    
    // for hitscan
@@ -201,6 +214,14 @@ public class SweptAABB
       double minY = Math.min(point.y, point.y + distance.y);
       double maxX = Math.max(point.x, point.x + distance.x);
       double maxY = Math.max(point.y, point.y + distance.y);
+      
+      if(type == GeometryType.DESCENDING_FLOOR)
+      {
+         System.out.println(String.format("Box: %.3f, %.3f : %.3f, %.3f", minX, minY, maxX, maxY));
+         System.out.println(String.format("BoxCenter: " + boxCenter));
+         System.out.println(String.format("Point: " + point));
+         System.out.println();
+      }
       // check if intersection occurs within distance
       if(intersection.x >= minX && intersection.x <= maxX &&
          intersection.y >= minY && intersection.y <= maxY)

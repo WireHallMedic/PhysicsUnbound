@@ -30,9 +30,9 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private boolean downHeld;
    
    // play around with toggling these
-   private boolean topDown = false;
+   private boolean topDown = true;
    private boolean showTerrainChecked = false;
-   private int bouncingBlockCount = 100;
+   private int bouncingBlockCount = 0;
    private boolean bouncingBoxesCollide = false;
    
 
@@ -353,6 +353,10 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       geometry[xStart + 1][y - 7] = GeometryType.FULL;
       geometry[xStart + 2][y - 7] = GeometryType.FULL;
       geometry[xStart + 3][y - 7] = GeometryType.ASCENDING_CEILING;
+      geometry[xStart][y - 8] = GeometryType.ASCENDING_FLOOR;
+      geometry[xStart + 1][y - 8] = GeometryType.FULL;
+      geometry[xStart + 2][y - 8] = GeometryType.FULL;
+      geometry[xStart + 3][y - 8] = GeometryType.DESCENDING_FLOOR;
       
       
       

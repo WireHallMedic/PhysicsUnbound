@@ -4,6 +4,7 @@ import org.junit.Assert;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import java.util.*;
 
 
 public class SweptAABBTest 
@@ -212,31 +213,39 @@ public class SweptAABBTest
    }
    
    @Test public void slopeTest()
-   {
-      DoublePair point = new DoublePair(0.5, 0.0);
-      DoublePair distance = new DoublePair(0.0, 5.0);
-      DoublePair boxOrigin = new DoublePair(0.0, 2.0);
-      DoublePair boxSize = new DoublePair(1.0, 1.0);
-      DoublePair expectedImpact = new DoublePair(.5, 2.5);
-      SweptAABB collision = new SweptAABB(point, distance, boxOrigin, boxSize, GeometryType.ASCENDING_FLOOR);
-      assertTrue("Collision at expected point", expectedImpact.equals(collision.getCollisionLoc()));
-      
-      point = new DoublePair(0.0, 2.5);
-      distance = new DoublePair(5.0, 0.0);
-      collision = new SweptAABB(point, distance, boxOrigin, boxSize, GeometryType.ASCENDING_FLOOR);
-      assertTrue("Collision at expected point", expectedImpact.equals(collision.getCollisionLoc()));
-      
-      point = new DoublePair(5.0, 2.5);
-      distance = new DoublePair(-5.0, 0.0);
-      expectedImpact = new DoublePair(.5, 3.0);
-      collision = new SweptAABB(point, distance, boxOrigin, boxSize, GeometryType.ASCENDING_FLOOR);
-      assertTrue("Collision at expected point", expectedImpact.equals(collision.getCollisionLoc()));
-      
-      point = new DoublePair(0.5, 5.0);
-      distance = new DoublePair(0.0, -5.0);
-      expectedImpact = new DoublePair(1.0, 2.5);
-      collision = new SweptAABB(point, distance, boxOrigin, boxSize, GeometryType.ASCENDING_FLOOR);
-      assertTrue("Collision at expected point", expectedImpact.equals(collision.getCollisionLoc()));
+   {  
+      Vector<GeometryType> typeList = new Vector<GeometryType>();
+      typeList.add(GeometryType.ASCENDING_FLOOR);
+      typeList.add(GeometryType.DESCENDING_FLOOR);
+      typeList.add(GeometryType.ASCENDING_CEILING);
+      typeList.add(GeometryType.DESCENDING_CEILING);
+      for(GeometryType type : typeList)
+      {
+         DoublePair point = new DoublePair(0.5, 0.0);
+         DoublePair distance = new DoublePair(0.0, 5.0);
+         DoublePair boxOrigin = new DoublePair(0.0, 2.0);
+         DoublePair boxSize = new DoublePair(1.0, 1.0);
+         DoublePair expectedImpact = new DoublePair(.5, 2.5);
+         SweptAABB collision = new SweptAABB(point, distance, boxOrigin, boxSize, type);
+         assertTrue("Collision at expected point, moving down into " + type, expectedImpact.equals(collision.getCollisionLoc()));
+         
+         point = new DoublePair(0.0, 2.5);
+         distance = new DoublePair(5.0, 0.0);
+         collision = new SweptAABB(point, distance, boxOrigin, boxSize, type);
+         assertTrue("Collision at expected point, moving right into " + type, expectedImpact.equals(collision.getCollisionLoc()));
+         
+         point = new DoublePair(5.0, 2.5);
+         distance = new DoublePair(-5.0, 0.0);
+         expectedImpact = new DoublePair(.5, 2.5);
+         collision = new SweptAABB(point, distance, boxOrigin, boxSize, type);
+         assertTrue("Collision at expected point, moving left into " + type, expectedImpact.equals(collision.getCollisionLoc()));
+         
+         point = new DoublePair(0.5, 5.0);
+         distance = new DoublePair(0.0, -5.0);
+         expectedImpact = new DoublePair(.5, 2.5);
+         collision = new SweptAABB(point, distance, boxOrigin, boxSize, type);
+         assertTrue("Collision at expected point, moving up into " + type, expectedImpact.equals(collision.getCollisionLoc()));
+      }
    }
    
    private PhysicsUnlockedEngine engineSetUp() 
