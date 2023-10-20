@@ -144,24 +144,20 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
       // rotate to make angle 0.0, set normals
       if(geoType.isAngled())
       {
-         int normalX = collision.getNormalX();
-         int normalY = collision.getNormalY();
+         int normalX = 0;
+         int normalY = 0;
          switch(geoType)
          {
             case ASCENDING_FLOOR :     spd.rotate(-DoublePair.EIGHTH_CIRCLE);
-                                       normalX = -1;
                                        normalY = -1;
                                        break;
-            case DESCENDING_FLOOR :    spd.rotate(-DoublePair.EIGHTH_CIRCLE);
-                                       normalX = 1;
+            case DESCENDING_FLOOR :    spd.rotate(DoublePair.EIGHTH_CIRCLE);
                                        normalY = -1;
                                        break;
-            case ASCENDING_CEILING :   spd.rotate(DoublePair.EIGHTH_CIRCLE);
-                                       normalX = 1;
+            case ASCENDING_CEILING :   spd.rotate(-DoublePair.EIGHTH_CIRCLE);
                                        normalY = 1;
                                        break;
-            case DESCENDING_CEILING :  spd.rotate(DoublePair.EIGHTH_CIRCLE); 
-                                       normalX = -1;
+            case DESCENDING_CEILING :  spd.rotate(DoublePair.EIGHTH_CIRCLE);
                                        normalY = 1;
                                        break;
          
@@ -173,12 +169,16 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
          switch(geoType)
          {
             case ASCENDING_FLOOR :     spd.rotate(DoublePair.EIGHTH_CIRCLE);
+                                       spdAdj.rotate(DoublePair.EIGHTH_CIRCLE);
                                        break;
-            case DESCENDING_FLOOR :    spd.rotate(DoublePair.EIGHTH_CIRCLE); 
+            case DESCENDING_FLOOR :    spd.rotate(-DoublePair.EIGHTH_CIRCLE); 
+                                       spdAdj.rotate(-DoublePair.EIGHTH_CIRCLE);
                                        break;
-            case ASCENDING_CEILING :   spd.rotate(-DoublePair.EIGHTH_CIRCLE);
+            case ASCENDING_CEILING :   spd.rotate(DoublePair.EIGHTH_CIRCLE);
+                                       spdAdj.rotate(DoublePair.EIGHTH_CIRCLE);
                                        break;
             case DESCENDING_CEILING :  spd.rotate(-DoublePair.EIGHTH_CIRCLE); 
+                                       spdAdj.rotate(-DoublePair.EIGHTH_CIRCLE);
                                        break;
          }
          
