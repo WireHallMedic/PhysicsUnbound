@@ -30,7 +30,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    private boolean downHeld;
    
    // play around with toggling these
-   private boolean topDown = true;
+   private boolean topDown = false;
    private boolean showTerrainChecked = false;
    private int bouncingBlockCount = 0;
    private boolean bouncingBoxesCollide = false;

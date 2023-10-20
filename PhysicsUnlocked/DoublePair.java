@@ -10,6 +10,7 @@ public class DoublePair
    public final static double THREE_QUARTER_CIRCLE = 3 * (Math.PI / 2); // 270 degrees
    public final static double HALF_CIRCLE = Math.PI;                    // 180 degrees
    public final static double QUARTER_CIRCLE = Math.PI / 2;             // 90 degrees
+   public final static double EIGHTH_CIRCLE = Math.PI / 4;              // 45 degrees
    
    public double x;
    public double y;

@@ -134,14 +134,64 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
    }
    
    // adjust speeds to stop short of a collision
-   public synchronized void adjustForCollision(SweptAABB collision)
+   public synchronized void adjustForCollision(SweptAABB collision){adjustForCollision(collision, GeometryType.FULL);}
+   public synchronized void adjustForCollision(SweptAABB collision, GeometryType geoType)
    {
+      DoublePair spd = getSpeed();
+      DoublePair spdAdj = new DoublePair();
       double remainingTime = 1.0 - collision.getTime();
-      double xSpeedAdj = Math.abs(getXSpeed()) * collision.getNormalX();
-      double ySpeedAdj = Math.abs(getYSpeed()) * collision.getNormalY();
       
-      setXSpeed(getXSpeed() + xSpeedAdj);
-      setYSpeed(getYSpeed() + ySpeedAdj);
+      // rotate to make angle 0.0, set normals
+      if(geoType.isAngled())
+      {
+         int normalX = collision.getNormalX();
+         int normalY = collision.getNormalY();
+         switch(geoType)
+         {
+            case ASCENDING_FLOOR :     spd.rotate(-DoublePair.EIGHTH_CIRCLE);
+                                       normalX = -1;
+                                       normalY = -1;
+                                       break;
+            case DESCENDING_FLOOR :    spd.rotate(-DoublePair.EIGHTH_CIRCLE);
+                                       normalX = 1;
+                                       normalY = -1;
+                                       break;
+            case ASCENDING_CEILING :   spd.rotate(DoublePair.EIGHTH_CIRCLE);
+                                       normalX = 1;
+                                       normalY = 1;
+                                       break;
+            case DESCENDING_CEILING :  spd.rotate(DoublePair.EIGHTH_CIRCLE); 
+                                       normalX = -1;
+                                       normalY = 1;
+                                       break;
+         
+         }
+         spdAdj.x = Math.abs(spd.x) * normalX;
+         spdAdj.y = Math.abs(spd.y) * normalY;
+         
+         // rotate back
+         switch(geoType)
+         {
+            case ASCENDING_FLOOR :     spd.rotate(DoublePair.EIGHTH_CIRCLE);
+                                       break;
+            case DESCENDING_FLOOR :    spd.rotate(DoublePair.EIGHTH_CIRCLE); 
+                                       break;
+            case ASCENDING_CEILING :   spd.rotate(-DoublePair.EIGHTH_CIRCLE);
+                                       break;
+            case DESCENDING_CEILING :  spd.rotate(-DoublePair.EIGHTH_CIRCLE); 
+                                       break;
+         }
+         
+         setXSpeed(spd.x + spdAdj.x);
+         setYSpeed(spd.y + spdAdj.y);
+      }
+      else
+      {
+         spdAdj.x = Math.abs(spd.x) * collision.getNormalX();
+         spdAdj.y = Math.abs(spd.y) * collision.getNormalY();
+         setXSpeed(spd.x + spdAdj.x);
+         setYSpeed(spd.y + spdAdj.y);
+      }
    }
    
    // accelerations

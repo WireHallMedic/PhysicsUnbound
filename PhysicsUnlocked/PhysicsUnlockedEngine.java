@@ -169,10 +169,11 @@ public class PhysicsUnlockedEngine implements Runnable
                // resolve each potential collision in order
                for(DoublePair dPair : prospectList)   
                {
-                  SweptAABB newCollision = new SweptAABB(obj, secondsElapsed, (int)dPair.x, (int)dPair.y, getGeometryType((int)dPair.x, (int)dPair.y));
+                  GeometryType geoType = getGeometryType((int)dPair.x, (int)dPair.y);
+                  SweptAABB newCollision = new SweptAABB(obj, secondsElapsed, (int)dPair.x, (int)dPair.y, geoType);
                   if(newCollision.isCollision())
                   {
-                     obj.adjustForCollision(newCollision);
+                     obj.adjustForCollision(newCollision, geoType);
                   }
                }
             }
