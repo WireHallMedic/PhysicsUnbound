@@ -58,11 +58,15 @@ public class SweptAABB
    public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY){this(obj, secondsElapsed, geometryX, geometryY, GeometryType.FULL);}
    public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY, GeometryType type)
    {
-      DoublePair boxOrigin = new DoublePair((1.0 * geometryX) - obj.getHalfWidth(), (1.0 * geometryY) - obj.getHalfHeight());
-      DoublePair boxSize = new DoublePair(1.0 + obj.getWidth(), 1.0 + obj.getHeight());
+      DoublePair boxOrigin = new DoublePair(geometryX, geometryY);
+      DoublePair boxSize = new DoublePair(1.0, 1.0);
       DoublePair distance = new DoublePair(obj.getSpeed().x * secondsElapsed, obj.getSpeed().y * secondsElapsed);
       if(!type.isAngled())
       {
+         boxOrigin.x -= obj.getHalfWidth();
+         boxOrigin.y -= obj.getHalfHeight();
+         boxSize.x += obj.getWidth();
+         boxSize.y += obj.getHeight();
          doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
       }
       else
@@ -76,7 +80,15 @@ public class SweptAABB
             case DESCENDING_FLOOR :    point.x -= obj.getHalfWidth(); point.y += obj.getHalfHeight(); break;
             case DESCENDING_CEILING :  point.x += obj.getHalfWidth(); point.y -= obj.getHalfHeight(); break;
          }
-         doAngledCheck(point, distance, boxOrigin, boxSize, type);
+         // if the lines intersect outside the box, we should treat it like GeometryType.FULL
+         if(!doAngledCheck(point, distance, boxOrigin, boxSize, type))
+         {
+            boxOrigin.x -= obj.getHalfWidth();
+            boxOrigin.y -= obj.getHalfHeight();
+            boxSize.x += obj.getWidth();
+            boxSize.y += obj.getHeight();
+            doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
+         }
       }
    }
    
@@ -192,7 +204,8 @@ public class SweptAABB
    }
 
    // do all the work, but for triangles
-   private void doAngledCheck(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
+   // returns false is the point is not in the box
+   private boolean doAngledCheck(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
    {
       // check if we should treat as box or slope
       normalX = 0;
@@ -207,15 +220,22 @@ public class SweptAABB
       
       // no collision if lines never intersect (movement is parallel to slope)
       if(!movingLine.hasIntersection(geometryLine))
-         return;
+         return true;
          
       DoublePair intersection = movingLine.getIntersection(geometryLine);
+      
+      // alert caller to run box check if intersection not in bounds of this tile
+      if(intersection.x < boxOrigin.x || intersection.x > boxOrigin.x + boxSize.x ||
+         intersection.y < boxOrigin.y || intersection.y > boxOrigin.y + boxSize.y)
+         return false;
+      
+      
+      // check if intersection occurs within distance
       double minX = Math.min(point.x, point.x + distance.x);
       double minY = Math.min(point.y, point.y + distance.y);
       double maxX = Math.max(point.x, point.x + distance.x);
       double maxY = Math.max(point.y, point.y + distance.y);
       
-      // check if intersection occurs within distance
       if(intersection.x >= minX && intersection.x <= maxX &&
          intersection.y >= minY && intersection.y <= maxY)
       {
@@ -239,6 +259,7 @@ public class SweptAABB
             if(distance.x < 0.0)
                normalX = 1;
       }
+      return true;
    }
    
    public String serialize()
