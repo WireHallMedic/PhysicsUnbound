@@ -205,23 +205,16 @@ public class SweptAABB
       Line movingLine = new Line(point, distance);
       Line geometryLine = new Line(boxCenter, type.getSlope());
       
-      
       // no collision if lines never intersect (movement is parallel to slope)
       if(!movingLine.hasIntersection(geometryLine))
          return;
+         
       DoublePair intersection = movingLine.getIntersection(geometryLine);
       double minX = Math.min(point.x, point.x + distance.x);
       double minY = Math.min(point.y, point.y + distance.y);
       double maxX = Math.max(point.x, point.x + distance.x);
       double maxY = Math.max(point.y, point.y + distance.y);
       
-      if(type == GeometryType.DESCENDING_FLOOR)
-      {
-         System.out.println(String.format("Box: %.3f, %.3f : %.3f, %.3f", minX, minY, maxX, maxY));
-         System.out.println(String.format("BoxCenter: " + boxCenter));
-         System.out.println(String.format("Point: " + point));
-         System.out.println();
-      }
       // check if intersection occurs within distance
       if(intersection.x >= minX && intersection.x <= maxX &&
          intersection.y >= minY && intersection.y <= maxY)
@@ -242,7 +235,7 @@ public class SweptAABB
          if(type == GeometryType.ASCENDING_FLOOR || type == GeometryType.DESCENDING_CEILING)
             if(distance.x > 0.0)
                normalX = -1;
-         if(type == GeometryType.ASCENDING_CEILING || type == GeometryType.ASCENDING_FLOOR)
+         if(type == GeometryType.ASCENDING_CEILING || type == GeometryType.DESCENDING_FLOOR)
             if(distance.x < 0.0)
                normalX = 1;
       }
