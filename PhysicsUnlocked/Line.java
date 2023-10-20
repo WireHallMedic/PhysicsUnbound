@@ -83,12 +83,12 @@ public class Line
    public boolean pointIsBelow(DoublePair thatPoint)
    {
       double y = (m * thatPoint.x) + b;
-      return y > thatPoint.y;
+      return y < thatPoint.y;
    }
    
    public boolean pointIsAbove(DoublePair thatPoint)
    {
       double y = (m * thatPoint.x) + b;
-      return y < thatPoint.y;
+      return y > thatPoint.y;
    }
 }

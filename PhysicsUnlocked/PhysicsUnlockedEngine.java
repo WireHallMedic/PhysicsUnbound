@@ -179,6 +179,8 @@ public class PhysicsUnlockedEngine implements Runnable
             }
             // move object
             obj.applySpeeds(secondsElapsed); 
+            // clean up diagonals
+            geometryPush(obj);
          }
       }
    }
@@ -543,7 +545,34 @@ public class PhysicsUnlockedEngine implements Runnable
       return geometry[x][y];
    }
    
+   public void geometryPush(MovingBoundingObject obj)
+   {
+      Vector<DoublePair> cornerList = new Vector<DoublePair>();
+      cornerList.add(new DoublePair(obj.getLoc().x - obj.getHalfWidth(), obj.getLoc().y - obj.getHalfHeight()));
+      cornerList.add(new DoublePair(obj.getLoc().x - obj.getHalfWidth(), obj.getLoc().y + obj.getHalfHeight()));
+      cornerList.add(new DoublePair(obj.getLoc().x + obj.getHalfWidth(), obj.getLoc().y + obj.getHalfHeight()));
+      cornerList.add(new DoublePair(obj.getLoc().x + obj.getHalfWidth(), obj.getLoc().y - obj.getHalfHeight()));
+      for(DoublePair corner : cornerList)
+      {
+         if(pointCollidesWithGeometry(corner))
+         {
+            GeometryType geoType = getGeometryType((int)corner.x, (int)corner.y);
+            DoublePair adj = new DoublePair();
+            switch(geoType)
+            {
+               case ASCENDING_FLOOR :     adj.x = -.001; adj.y = -.001; break;
+               case DESCENDING_FLOOR :    adj.x = .001; adj.y = -.001; break;
+               case ASCENDING_CEILING :   adj.x = .001; adj.y = .001; break;
+               case DESCENDING_CEILING :  adj.x = -.001; adj.y = .001; break;
+            }
+            obj.setXLoc(obj.getXLoc() + adj.x);
+            obj.setYLoc(obj.getYLoc() + adj.y);
+         }
+      }
+   }
    
+   
+   public boolean pointCollidesWithGeometry(DoublePair point){return pointCollidesWithGeometry(point, (int)point.x, (int)point.y);}
    public boolean pointCollidesWithGeometry(DoublePair point, int x, int y)
    {
       double xLoc = point.x - x;
@@ -552,10 +581,25 @@ public class PhysicsUnlockedEngine implements Runnable
       if(xLoc < 0.0 || xLoc > 1.0 ||
          yLoc < 0.0 || yLoc > 1.0)
          return false;
-      switch(getGeometryType(x, y))
+      GeometryType geoType = getGeometryType(x, y);
+      if(geoType.isAngled())
       {
-         case FULL : return true;
-         case EMPTY : return false;
+         Line line = new Line(new DoublePair(x + .5, y + .5), geoType.getSlope());
+         switch(geoType)
+         {
+            case ASCENDING_FLOOR :     return line.pointIsBelow(point);
+            case DESCENDING_FLOOR :    return line.pointIsBelow(point);
+            case ASCENDING_CEILING :   return line.pointIsAbove(point);
+            case DESCENDING_CEILING :  return line.pointIsAbove(point);
+         }
+      }
+      else
+      {
+         switch(geoType)
+         {
+            case FULL : return true;
+            case EMPTY : return false;
+         }
       }
       return true;
    }
