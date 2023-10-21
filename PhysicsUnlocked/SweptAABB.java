@@ -20,6 +20,7 @@ public class SweptAABB
 	private double time;    // in range of [0.0, 1.0]
    private boolean collision; // did we collide
    private DoublePair collisionLoc;
+   private GeometryType geoType;
 
 
 	public int getNormalX(){return normalX;}
@@ -27,6 +28,7 @@ public class SweptAABB
 	public double getTime(){return time;}
    public boolean isCollision(){return collision;}
    public DoublePair getCollisionLoc(){return new DoublePair(collisionLoc);}
+   public GeometryType getGeoType(){return geoType;}
 
 
    public SweptAABB()
@@ -36,6 +38,7 @@ public class SweptAABB
    	time = 1.0;
       collision = false;
       collisionLoc = null;
+      geoType = null;
    }
    
    public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize){this(point, distance, boxOrigin, boxSize, GeometryType.FULL);}
@@ -81,33 +84,31 @@ public class SweptAABB
             case DESCENDING_FLOOR :    point.x -= obj.getHalfWidth(); point.y += obj.getHalfHeight(); break;
             case DESCENDING_CEILING :  point.x += obj.getHalfWidth(); point.y -= obj.getHalfHeight(); break;
          }
-         // see if we should treat slope tile as box
-         DoublePair lineOrigin = new DoublePair(geometryX + .5, geometryY + .5);
-         Line geometryLine = new Line(lineOrigin, type.getSlope());
          
-         // if the point is on the wrong side of the geometryLine, check as if this were a box
-  //        if(type == GeometryType.ASCENDING_FLOOR || type == GeometryType.DESCENDING_FLOOR)
-//          {
-//             if(geometryLine.pointIsBelow(point))
-//             {
-//                doBoxCheck = true;
-//             }
-//          }
-//          if(type == GeometryType.ASCENDING_CEILING || type == GeometryType.DESCENDING_CEILING)
-//          {
-//             if(geometryLine.pointIsAbove(point))
-//                doBoxCheck = true;
-//          }
-//          
+         // if the point is above the slope of a ceiling or below the slope of a floor, treat like a box
+         DoublePair linePoint = new DoublePair(geometryX + .5, geometryY + .5);
+         Line geoLine = new Line(linePoint, type.getSlope());
+         switch(type)
+         {
+            case ASCENDING_FLOOR :     
+            case DESCENDING_FLOOR :    if(geoLine.pointIsBelow(point))
+                                          doBoxCheck = true;
+                                       break;
+            case ASCENDING_CEILING :   
+            case DESCENDING_CEILING :  if(geoLine.pointIsAbove(point))
+                                          doBoxCheck = true;
+                                       break;
+         }
+         
          // if the lines intersect outside the box, we should treat it like GeometryType.FULL
-         if(!doAngledCheck(point, distance, boxOrigin, boxSize, type))
-         {System.out.println("False returned");
+         if(!doBoxCheck && !doAngledCheck(point, distance, boxOrigin, boxSize, type))
+         {
             doBoxCheck = true;
          }
          
+         // run a standard box check
          if(doBoxCheck)
          {
-            System.out.println("Doing box check");
             boxOrigin.x -= obj.getHalfWidth();
             boxOrigin.y -= obj.getHalfHeight();
             boxSize.x += obj.getWidth();
@@ -132,6 +133,7 @@ public class SweptAABB
       normalY = 0;
       time = 1.0;
       collision = false;
+      geoType = null;
       
       DoublePair nearIntercept = new DoublePair();
       DoublePair farIntercept = new DoublePair();
@@ -225,6 +227,7 @@ public class SweptAABB
             time = 0.0;
          collisionLoc = new DoublePair(point.x + (distance.x * time), point.y + (distance.y * time));
          collision = true;
+         geoType = GeometryType.FULL;
       }
    }
 
@@ -248,7 +251,7 @@ public class SweptAABB
       // alert caller to run box check if intersection not in bounds of this tile
       if(intersection.x < boxOrigin.x || intersection.x > boxOrigin.x + boxSize.x ||
          intersection.y < boxOrigin.y || intersection.y > boxOrigin.y + boxSize.y)
-      {System.out.println("Intersection not in box");
+      {
          return false;
       }
       
@@ -270,6 +273,7 @@ public class SweptAABB
          collision = true;
          time = distance.getMagnitude() / distToCollision.getMagnitude();
          collisionLoc = new DoublePair(intersection);
+         geoType = type;
          
          // set normals
          if(type == GeometryType.ASCENDING_FLOOR || type == GeometryType.DESCENDING_FLOOR)

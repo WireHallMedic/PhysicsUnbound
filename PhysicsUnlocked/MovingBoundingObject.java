@@ -134,15 +134,14 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
    }
    
    // adjust speeds to stop short of a collision
-   public synchronized void adjustForCollision(SweptAABB collision){adjustForCollision(collision, GeometryType.FULL);}
-   public synchronized void adjustForCollision(SweptAABB collision, GeometryType geoType)
+   public synchronized void adjustForCollision(SweptAABB collision)
    {
       DoublePair spd = getSpeed();
       
       // rotate to make angle 0.0, we don't need normals because we know there's only a y collision
-      if(geoType.isAngled())
+      if(collision.getGeoType().isAngled())
       {
-         switch(geoType)
+         switch(collision.getGeoType())
          {
             case ASCENDING_FLOOR :     spd.rotate(-DoublePair.EIGHTH_CIRCLE);
                                        break;
@@ -157,7 +156,7 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
          spd.y = 0.0;
          
          // rotate back
-         switch(geoType)
+         switch(collision.getGeoType())
          {
             case ASCENDING_FLOOR :     spd.rotate(DoublePair.EIGHTH_CIRCLE);
                                        break;

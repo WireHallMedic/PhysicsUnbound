@@ -173,7 +173,7 @@ public class PhysicsUnlockedEngine implements Runnable
                   SweptAABB newCollision = new SweptAABB(obj, secondsElapsed, (int)dPair.x, (int)dPair.y, geoType);
                   if(newCollision.isCollision())
                   {
-                     obj.adjustForCollision(newCollision, geoType);
+                     obj.adjustForCollision(newCollision);
                   }
                }
             }
