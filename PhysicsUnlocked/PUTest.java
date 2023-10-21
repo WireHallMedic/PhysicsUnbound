@@ -177,12 +177,34 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       {
          drawOriginPixelsX = x * tileSizePixels + inset;
          drawOriginPixelsY = y * tileSizePixels + inset;
+         int quarterSize = tileSizePixels / 4;
+         int threeQuarterSize = tileSizePixels * 3 / 4;
          if(geometry[x][y] == GeometryType.FULL)
          {
             g2d.setColor(Color.WHITE);
             g2d.fillRect(drawOriginPixelsX, drawOriginPixelsY, tileSizePixels, tileSizePixels);
          }
-         else // empty
+         if(geometry[x][y] == GeometryType.BLOCKS_RIGHT)
+         {
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(drawOriginPixelsX, drawOriginPixelsY, quarterSize, tileSizePixels);
+         }
+         if(geometry[x][y] == GeometryType.BLOCKS_LEFT)
+         {
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(drawOriginPixelsX + threeQuarterSize, drawOriginPixelsY, quarterSize, tileSizePixels);
+         }
+         if(geometry[x][y] == GeometryType.BLOCKS_UP)
+         {
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(drawOriginPixelsX, drawOriginPixelsY + threeQuarterSize, tileSizePixels, quarterSize);
+         }
+         if(geometry[x][y] == GeometryType.BLOCKS_DOWN)
+         {
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(drawOriginPixelsX, drawOriginPixelsY, tileSizePixels, quarterSize);
+         }
+         if(geometry[x][y] == GeometryType.EMPTY)
          {
             g2d.setColor(Color.BLACK);
             g2d.fillRect(drawOriginPixelsX, drawOriginPixelsY, tileSizePixels, tileSizePixels);
@@ -308,6 +330,14 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
          geometry[6][geometry[0].length - 5 - (i * 4)] = GeometryType.FULL;
          geometry[7][geometry[0].length - 5 - (i * 4)] = GeometryType.FULL;
       }
+      
+      geometry[10][4] = GeometryType.BLOCKS_RIGHT;
+      geometry[12][4] = GeometryType.BLOCKS_LEFT;
+      geometry[14][4] = GeometryType.BLOCKS_UP;
+      geometry[16][4] = GeometryType.BLOCKS_DOWN;
+      
+      for(int x = 15; x < 30; x++)
+         geometry[x][geometry[0].length - 3] = GeometryType.BLOCKS_DOWN;
             
       return geometry;
    }
