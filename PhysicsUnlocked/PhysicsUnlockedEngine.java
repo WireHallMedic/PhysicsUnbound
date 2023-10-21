@@ -501,37 +501,56 @@ public class PhysicsUnlockedEngine implements Runnable
       double minY = y - obj.getHalfHeight();
       double maxX = x + 1.0 + obj.getHalfWidth();
       double maxY = y + 1.0 + obj.getHalfHeight();
-      double xLoc = obj.getXLoc() + xShift;
-      double yLoc = obj.getYLoc() + yShift;
+      DoublePair shiftedPoint = obj.getLoc();
+      shiftedPoint.x += xShift;
+      shiftedPoint.y += yShift;
       
+      // use corner if the block is angled and we're on the right side of the line
       if(isInBounds(x, y) && geometry[x][y].isAngled())
       {
          DoublePair linePoint = new DoublePair(x + .5, y + .5);
          Line line = new Line(linePoint, geometry[x][y].getSlope());
+         DoublePair cornerPoint = new DoublePair(shiftedPoint);
          switch(geometry[x][y])
          {
-            case ASCENDING_FLOOR :     xLoc += obj.getHalfWidth();
-                                       yLoc += obj.getHalfHeight();
-                                       minY = line.getYAtX(xLoc);
+            case ASCENDING_FLOOR :     cornerPoint.x += obj.getHalfWidth();
+                                       cornerPoint.y += obj.getHalfHeight();
+                                       if(line.pointIsAbove(cornerPoint))
+                                       {
+                                          minY = line.getYAtX(cornerPoint.x);
+                                          shiftedPoint = cornerPoint;
+                                       }
                                        break;
-            case DESCENDING_FLOOR :    xLoc -= obj.getHalfWidth();
-                                       yLoc += obj.getHalfHeight();
-                                       minY = line.getYAtX(xLoc); 
+            case DESCENDING_FLOOR :    cornerPoint.x -= obj.getHalfWidth();
+                                       cornerPoint.y += obj.getHalfHeight();
+                                       if(line.pointIsAbove(cornerPoint))
+                                       {
+                                          minY = line.getYAtX(cornerPoint.x); 
+                                          shiftedPoint = cornerPoint;
+                                       }
                                        break;
-            case ASCENDING_CEILING :   xLoc -= obj.getHalfWidth();
-                                       yLoc -= obj.getHalfHeight();
-                                       maxY = line.getYAtX(xLoc);
+            case ASCENDING_CEILING :   cornerPoint.x -= obj.getHalfWidth();
+                                       cornerPoint.y -= obj.getHalfHeight();
+                                       if(line.pointIsBelow(cornerPoint))
+                                       {
+                                          maxY = line.getYAtX(cornerPoint.x);
+                                          shiftedPoint = cornerPoint;
+                                       }
                                        break;
-            case DESCENDING_CEILING :  xLoc += obj.getHalfWidth();
-                                       yLoc -= obj.getHalfHeight();
-                                       maxY = line.getYAtX(xLoc);
+            case DESCENDING_CEILING :  cornerPoint.x += obj.getHalfWidth();
+                                       cornerPoint.y -= obj.getHalfHeight();
+                                       if(line.pointIsBelow(cornerPoint))
+                                       {
+                                          maxY = line.getYAtX(cornerPoint.x);
+                                          shiftedPoint = cornerPoint;
+                                       }
                                        break;
          }
       }
-      return xLoc <= maxX &&
-             xLoc >= minX &&
-             yLoc <= maxY &&
-             yLoc >= minY;
+      return shiftedPoint.x <= maxX &&
+             shiftedPoint.x >= minX &&
+             shiftedPoint.y <= maxY &&
+             shiftedPoint.y >= minY;
    }
    
    // order list by closest

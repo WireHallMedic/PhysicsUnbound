@@ -32,7 +32,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
    // play around with toggling these
    private boolean topDown = true;
    private boolean showTerrainChecked = false;
-   private int bouncingBlockCount = 0;
+   private int bouncingBlockCount = 50;
    private boolean bouncingBoxesCollide = false;
    
 
