@@ -43,7 +43,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       box = new BoundingBox(.90, .90);
       box.setLoc(6.0, 3.0);
       box.setXMaxSpeed(walkSpeed);
-      box.setPushedByGeometry(false);
+   //   box.setPushedByGeometry(false);
       engine.add(box, PhysicsUnlockedEngine.PLAYER);
       
       bouncingBox = new BouncyBox[bouncingBlockCount];
@@ -374,6 +374,15 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       geometry[xStart][y] = GeometryType.ASCENDING_FLOOR;
       geometry[xStart + 1][y] = GeometryType.FULL;
       geometry[xStart + 1][y - 1] = GeometryType.FULL;
+      
+      xStart = geometry.length - 7;
+      int yStart = geometry[0].length - 2;
+      for(int i = 0; i < 6; i++)
+      {
+         geometry[xStart + i][yStart - i] = GeometryType.ASCENDING_FLOOR;
+         for(int x = xStart + i + 1; x < geometry.length - 1; x++)
+            geometry[x][yStart - i] = GeometryType.FULL;
+      }
       
       return geometry;
    }
