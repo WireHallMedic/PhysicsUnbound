@@ -180,7 +180,8 @@ public class PhysicsUnlockedEngine implements Runnable
             // move object
             obj.applySpeeds(secondsElapsed); 
             // clean up diagonals
-            geometryPush(obj);
+            if(obj.isPushedByGeometry())
+               geometryPush(obj);
          }
       }
    }
@@ -500,10 +501,37 @@ public class PhysicsUnlockedEngine implements Runnable
       double minY = y - obj.getHalfHeight();
       double maxX = x + 1.0 + obj.getHalfWidth();
       double maxY = y + 1.0 + obj.getHalfHeight();
-      return obj.getXLoc() + xShift <= maxX &&
-             obj.getXLoc() + xShift >= minX &&
-             obj.getYLoc() + yShift <= maxY &&
-             obj.getYLoc() + yShift >= minY;
+      double xLoc = obj.getXLoc() + xShift;
+      double yLoc = obj.getYLoc() + yShift;
+      
+      if(isInBounds(x, y) && geometry[x][y].isAngled())
+      {
+         DoublePair linePoint = new DoublePair(x + .5, y + .5);
+         Line line = new Line(linePoint, geometry[x][y].getSlope());
+         switch(geometry[x][y])
+         {
+            case ASCENDING_FLOOR :     xLoc += obj.getHalfWidth();
+                                       yLoc += obj.getHalfHeight();
+                                       minY = line.getYAtX(xLoc);
+                                       break;
+            case DESCENDING_FLOOR :    xLoc -= obj.getHalfWidth();
+                                       yLoc += obj.getHalfHeight();
+                                       minY = line.getYAtX(xLoc); 
+                                       break;
+            case ASCENDING_CEILING :   xLoc -= obj.getHalfWidth();
+                                       yLoc -= obj.getHalfHeight();
+                                       maxY = line.getYAtX(xLoc);
+                                       break;
+            case DESCENDING_CEILING :  xLoc += obj.getHalfWidth();
+                                       yLoc -= obj.getHalfHeight();
+                                       maxY = line.getYAtX(xLoc);
+                                       break;
+         }
+      }
+      return xLoc <= maxX &&
+             xLoc >= minX &&
+             yLoc <= maxY &&
+             yLoc >= minY;
    }
    
    // order list by closest

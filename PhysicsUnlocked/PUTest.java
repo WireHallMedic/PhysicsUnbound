@@ -43,6 +43,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       box = new BoundingBox(.90, .90);
       box.setLoc(6.0, 3.0);
       box.setXMaxSpeed(walkSpeed);
+      box.setPushedByGeometry(false);
       engine.add(box, PhysicsUnlockedEngine.PLAYER);
       
       bouncingBox = new BouncyBox[bouncingBlockCount];
@@ -301,7 +302,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
       y = box.getDrawOriginY(tileSizePixels) + inset;
       width = (int)(box.getWidth() * tileSizePixels);
       height = (int)(box.getHeight() * tileSizePixels);
-      if(collisionIndicationCounter > 0)
+      if(engine.isCollidingWithGeometry(box) || collisionIndicationCounter > 0)
          g2d.setColor(Color.RED);
       else
          g2d.setColor(Color.ORANGE);
