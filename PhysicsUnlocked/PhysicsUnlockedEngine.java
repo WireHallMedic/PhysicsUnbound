@@ -165,7 +165,7 @@ public class PhysicsUnlockedEngine implements Runnable
                   }
                }
                // sort list
-               prospectList = getOrderedList(prospectList, obj.getLoc());
+               prospectList = orderByType(prospectList, obj.getLoc());
                // resolve each potential collision in order
                for(DoublePair dPair : prospectList)   
                {
@@ -553,8 +553,32 @@ public class PhysicsUnlockedEngine implements Runnable
              shiftedPoint.y >= minY;
    }
    
+   // returns a list ordered by angled vs. not, with sub-sorting by closeness
+   private Vector<DoublePair> orderByType(Vector<DoublePair> list, DoublePair loc)
+   {
+      Vector<DoublePair> angledList = new Vector<DoublePair>();
+      Vector<DoublePair> squareList = new Vector<DoublePair>();
+      for(DoublePair element : list)
+      {
+         int x = (int)element.x;
+         int y = (int)element.y;
+         if(isInBounds(x, y) && geometry[x][y].isAngled())
+            angledList.add(element);
+         else
+            squareList.add(element);
+      }
+      angledList = orderByClosest(angledList, loc);
+      squareList = orderByClosest(squareList, loc);
+      Vector<DoublePair> newList = new Vector<DoublePair>();
+      for(DoublePair element : angledList)
+         newList.add(element);
+      for(DoublePair element : squareList)
+         newList.add(element);
+      return newList;
+   }
+   
    // order list by closest
-   private Vector<DoublePair> getOrderedList(Vector<DoublePair> list, DoublePair loc)
+   private Vector<DoublePair> orderByClosest(Vector<DoublePair> list, DoublePair loc)
    {
       Vector<DoublePair> newList = new Vector<DoublePair>();
       while(list.size() > 0)
