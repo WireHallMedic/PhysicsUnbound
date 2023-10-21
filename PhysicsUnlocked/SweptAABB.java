@@ -41,7 +41,7 @@ public class SweptAABB
    public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize){this(point, distance, boxOrigin, boxSize, GeometryType.FULL);}
    public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
    {
-      doCheck(point, distance, boxOrigin, boxSize);
+      doCheck(point, distance, boxOrigin, boxSize, type);
    }
    
    public SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj)
@@ -49,7 +49,7 @@ public class SweptAABB
       DoublePair boxOrigin = obj.getLoc();
       boxOrigin.x -= obj.getHalfWidth();
       boxOrigin.y -= obj.getHalfHeight();
-      doCheck(point, distance, boxOrigin, new DoublePair(obj.getWidth(), obj.getHeight()));
+      doCheck(point, distance, boxOrigin, new DoublePair(obj.getWidth(), obj.getHeight()), GeometryType.FULL);
    }
    
    public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY){this(obj, secondsElapsed, geometryX, geometryY, GeometryType.FULL);}
@@ -59,24 +59,29 @@ public class SweptAABB
       DoublePair boxSize = new DoublePair(1.0 + obj.getWidth(), 1.0 + obj.getHeight());
       DoublePair distance = new DoublePair(obj.getSpeed().x * secondsElapsed, obj.getSpeed().y * secondsElapsed);
 
-      doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
+      doCheck(obj.getLoc(), distance, boxOrigin, boxSize, type);
    }
    
    // for hitscan
-   public SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY)
+   public SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY){this(origin, distance, geometryX, geometryY, GeometryType.FULL);}
+   public SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY, GeometryType type)
    {
       DoublePair boxOrigin = new DoublePair(geometryX, geometryY);
       DoublePair boxSize = new DoublePair(1.0, 1.0);
-      doCheck(origin, distance, boxOrigin, boxSize);
+      doCheck(origin, distance, boxOrigin, boxSize, type);
    }
 
    // do all the work
-   private void doCheck(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize)
+   private void doCheck(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
    {
       normalX = 0;
       normalY = 0;
       time = 1.0;
       collision = false;
+      
+      // early exit for passthrough tiles
+      if(shouldIgnore(point, boxOrigin, boxSize, type))
+         return;
       
       DoublePair nearIntercept = new DoublePair();
       DoublePair farIntercept = new DoublePair();
@@ -171,6 +176,27 @@ public class SweptAABB
          collisionLoc = new DoublePair(point.x + (distance.x * time), point.y + (distance.y * time));
          collision = true;
       }
+   }
+   
+   public boolean shouldIgnore(DoublePair point, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
+   {
+      if(type == GeometryType.BLOCKS_RIGHT)     // passable if you're right of the left boundary
+      {
+         return point.x > boxOrigin.x;
+      }
+      if(type == GeometryType.BLOCKS_LEFT)      // passable if you're on the left of the right
+      {
+         return point.x < boxOrigin.x + boxSize.x;
+      }
+      if(type == GeometryType.BLOCKS_UP)        // passable if you're above the bottom
+      {
+         return point.y < boxOrigin.y + boxSize.y;
+      }
+      if(type == GeometryType.BLOCKS_DOWN)      // passable if you're below the top
+      {
+         return point.y > boxOrigin.y;
+      }
+      return false;
    }
    
    public String serialize()

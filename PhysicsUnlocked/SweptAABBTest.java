@@ -25,13 +25,13 @@ public class SweptAABBTest
    
    @Test public void verticalTest() 
    {
-      DoublePair point = new DoublePair(1.5f, 0.0);
-      DoublePair speed = new DoublePair(0.0, 0.5f);
+      DoublePair point = new DoublePair(1.5, 0.0);
+      DoublePair speed = new DoublePair(0.0, 0.5);
       DoublePair boxOrigin = new DoublePair(1.0, 1.0);
       DoublePair boxSize = new DoublePair(1.0, 1.0);
       SweptAABB collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize);
       assertEquals("Vertical undershot does not collide.", 1.0, collisionCheck.getTime(), .01);
-      speed = new DoublePair(0.0, 1.5f);
+      speed = new DoublePair(0.0, 1.5);
       collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize);
       assertEquals("Vertical collision collides.", .667f, collisionCheck.getTime(), .01);
       speed = new DoublePair(0.0, 3.0);
@@ -39,7 +39,7 @@ public class SweptAABBTest
       assertEquals("Vertical overshot collides.", .333f, collisionCheck.getTime(), .01);
       assertEquals("Shot from above sets normalX to 0.", 0, collisionCheck.getNormalX());
       assertEquals("Shot from above sets normalY to -1.", -1, collisionCheck.getNormalY());
-      point = new DoublePair(1.5f, 3.0);
+      point = new DoublePair(1.5, 3.0);
       speed = new DoublePair(0.0, -3.0);
       collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize);
       assertEquals("Shot from below sets normalX to 0.", 0, collisionCheck.getNormalX());
@@ -48,13 +48,13 @@ public class SweptAABBTest
    
    @Test public void horizontalTest() 
    {
-      DoublePair point = new DoublePair(0.0, 1.5f);
-      DoublePair speed = new DoublePair(0.5f, 0.0);
+      DoublePair point = new DoublePair(0.0, 1.5);
+      DoublePair speed = new DoublePair(0.5, 0.0);
       DoublePair boxOrigin = new DoublePair(1.0, 1.0);
       DoublePair boxSize = new DoublePair(1.0, 1.0);
       SweptAABB collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize);
       assertEquals("Horizontal undershot does not collide.", 1.0, collisionCheck.getTime(), .01);
-      speed = new DoublePair(1.5f, 0.0);
+      speed = new DoublePair(1.5, 0.0);
       collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize);
       assertEquals("Horizontal collision collides.", .667f, collisionCheck.getTime(), .01);
       speed = new DoublePair(3.0, 0.0);
@@ -62,7 +62,7 @@ public class SweptAABBTest
       assertEquals("Horizontal overshot collides.", .333f, collisionCheck.getTime(), .01);
       assertEquals("Shot from left sets normalX to -1.", -1, collisionCheck.getNormalX());
       assertEquals("Shot from left sets normalY to 0.", 0, collisionCheck.getNormalY());
-      point = new DoublePair(3.0, 1.5f);
+      point = new DoublePair(3.0, 1.5);
       speed = new DoublePair(-3.0, 0.0);
       collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize);
       assertEquals("Shot from right sets normalX to 1.", 1, collisionCheck.getNormalX());
@@ -91,6 +91,42 @@ public class SweptAABBTest
       collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize);
       assertEquals("Diagonal shot hitting top sets normalX to 0.", 0, collisionCheck.getNormalX());
       assertEquals("Diagonal shot hitting top sets normalY to -1.", -1, collisionCheck.getNormalY());
+   }
+   
+   
+   
+   @Test public void passableTest() 
+   {
+      DoublePair point = new DoublePair(0.0, 0.5);
+      DoublePair speed = new DoublePair(5.0, 0.0);
+      DoublePair boxOrigin = new DoublePair(1.5, 0.25);
+      DoublePair boxSize = new DoublePair(.5, .5);
+      SweptAABB collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize, GeometryType.BLOCKS_LEFT);
+      assertEquals("Rightwards shot through BLOCKS_LEFT passes through.", 1.0, collisionCheck.getTime(), .01);
+      collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize, GeometryType.BLOCKS_RIGHT);
+      assertEquals("Rightwards shot through BLOCKS_RIGHT collides.", .3, collisionCheck.getTime(), .01);
+      
+      point = new DoublePair(3.0, 0.5);
+      speed = new DoublePair(-5.0, 0.0);
+      collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize, GeometryType.BLOCKS_RIGHT);
+      assertEquals("Leftwards shot through BLOCKS_RIGHT passes through.", 1.0, collisionCheck.getTime(), .01);
+      collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize, GeometryType.BLOCKS_LEFT);
+      assertEquals("Leftwards shot through BLOCKS_LEFT collides.", .2, collisionCheck.getTime(), .01);
+      
+      point = new DoublePair(1.75, 0.0);
+      speed = new DoublePair(0.0, 5.0);
+      boxOrigin = new DoublePair(1.5, 2.0);
+      collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize, GeometryType.BLOCKS_UP);
+      assertEquals("Downwards shot through BLOCKS_UP passes through.", 1.0, collisionCheck.getTime(), .01);
+      collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize, GeometryType.BLOCKS_DOWN);
+      assertEquals("Downwards shot through BLOCKS_DOWN collides.", .4, collisionCheck.getTime(), .01);
+      
+      point = new DoublePair(1.75, 4.0);
+      speed = new DoublePair(0.0, -5.0);
+      collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize, GeometryType.BLOCKS_DOWN);
+      assertEquals("Upwards shot through BLOCKS_DOWN passes through.", 1.0, collisionCheck.getTime(), .01);
+      collisionCheck = new SweptAABB(point, speed, boxOrigin, boxSize, GeometryType.BLOCKS_UP);
+      assertEquals("Upwards shot through BLOCKS_UP collides.", .3, collisionCheck.getTime(), .01);
    }
    
    @Test public void doublePrecisionTest()
