@@ -20,7 +20,6 @@ public class SweptAABB
 	private double time;    // in range of [0.0, 1.0]
    private boolean collision; // did we collide
    private DoublePair collisionLoc;
-   private GeometryType geoType;
 
 
 	public int getNormalX(){return normalX;}
@@ -28,7 +27,6 @@ public class SweptAABB
 	public double getTime(){return time;}
    public boolean isCollision(){return collision;}
    public DoublePair getCollisionLoc(){return new DoublePair(collisionLoc);}
-   public GeometryType getGeoType(){return geoType;}
 
 
    public SweptAABB()
@@ -38,16 +36,12 @@ public class SweptAABB
    	time = 1.0;
       collision = false;
       collisionLoc = null;
-      geoType = null;
    }
    
    public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize){this(point, distance, boxOrigin, boxSize, GeometryType.FULL);}
    public SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
    {
-      if(!type.isAngled())
-         doCheck(point, distance, boxOrigin, boxSize);
-      else
-         doAngledCheck(point, distance, boxOrigin, boxSize, type);
+      doCheck(point, distance, boxOrigin, boxSize);
    }
    
    public SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj)
@@ -61,61 +55,11 @@ public class SweptAABB
    public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY){this(obj, secondsElapsed, geometryX, geometryY, GeometryType.FULL);}
    public SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY, GeometryType type)
    {
-      DoublePair boxOrigin = new DoublePair(geometryX, geometryY);
-      DoublePair boxSize = new DoublePair(1.0, 1.0);
+      DoublePair boxOrigin = new DoublePair(geometryX - obj.getHalfWidth(), geometryY - obj.getHalfHeight());
+      DoublePair boxSize = new DoublePair(1.0 + obj.getWidth(), 1.0 + obj.getHeight());
       DoublePair distance = new DoublePair(obj.getSpeed().x * secondsElapsed, obj.getSpeed().y * secondsElapsed);
-      if(!type.isAngled())
-      {
-         boxOrigin.x -= obj.getHalfWidth();
-         boxOrigin.y -= obj.getHalfHeight();
-         boxSize.x += obj.getWidth();
-         boxSize.y += obj.getHeight();
-         doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
-      }
-      else
-      {
-         boolean doBoxCheck = false;
-         DoublePair point = obj.getLoc();
-         // get the corner we're going to use
-         switch(type)
-         {
-            case ASCENDING_FLOOR :     point.x += obj.getHalfWidth(); point.y += obj.getHalfHeight(); break;
-            case ASCENDING_CEILING :   point.x -= obj.getHalfWidth(); point.y -= obj.getHalfHeight(); break;
-            case DESCENDING_FLOOR :    point.x -= obj.getHalfWidth(); point.y += obj.getHalfHeight(); break;
-            case DESCENDING_CEILING :  point.x += obj.getHalfWidth(); point.y -= obj.getHalfHeight(); break;
-         }
-         
-         // if the point is above the slope of a ceiling or below the slope of a floor, treat like a box
-         DoublePair linePoint = new DoublePair(geometryX + .5, geometryY + .5);
-         Line geoLine = new Line(linePoint, type.getSlope());
-         switch(type)
-         {
-            case ASCENDING_FLOOR :     
-            case DESCENDING_FLOOR :    if(geoLine.pointIsBelow(point))
-                                          doBoxCheck = true;
-                                       break;
-            case ASCENDING_CEILING :   
-            case DESCENDING_CEILING :  if(geoLine.pointIsAbove(point))
-                                          doBoxCheck = true;
-                                       break;
-         }
-         
-         // if the lines intersect outside the box, we should treat it like GeometryType.FULL
-         if(!doBoxCheck && !doAngledCheck(point, distance, boxOrigin, boxSize, type))
-         {
-            doBoxCheck = true;
-         }
-         
-         // run a standard box check
-         if(doBoxCheck)
-         {
-            boxOrigin.x -= obj.getHalfWidth();
-            boxOrigin.y -= obj.getHalfHeight();
-            boxSize.x += obj.getWidth();
-            boxSize.y += obj.getHeight();
-            doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
-         }
-      }
+
+      doCheck(obj.getLoc(), distance, boxOrigin, boxSize);
    }
    
    // for hitscan
@@ -133,7 +77,6 @@ public class SweptAABB
       normalY = 0;
       time = 1.0;
       collision = false;
-      geoType = null;
       
       DoublePair nearIntercept = new DoublePair();
       DoublePair farIntercept = new DoublePair();
@@ -227,69 +170,7 @@ public class SweptAABB
             time = 0.0;
          collisionLoc = new DoublePair(point.x + (distance.x * time), point.y + (distance.y * time));
          collision = true;
-         geoType = GeometryType.FULL;
       }
-   }
-
-   // do all the work, but for triangles
-   // returns false is the point is not in the box
-   private boolean doAngledCheck(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
-   {
-      // check if we should treat as box or slope
-      normalX = 0;
-      normalY = 0;
-      time = 1.0;
-      collision = false;
-      
-      // determine lines
-      DoublePair boxCenter = new DoublePair(boxOrigin.x + (boxSize.x / 2), boxOrigin.y + (boxSize.y / 2));
-      Line movingLine = new Line(point, distance);
-      Line geometryLine = new Line(boxCenter, type.getSlope());
-         
-      DoublePair intersection = movingLine.getIntersection(geometryLine);
-      
-      // alert caller to run box check if intersection not in bounds of this tile
-      if(intersection.x < boxOrigin.x || intersection.x > boxOrigin.x + boxSize.x ||
-         intersection.y < boxOrigin.y || intersection.y > boxOrigin.y + boxSize.y)
-      {
-         return false;
-      }
-      
-      // no collision if lines never intersect (movement is parallel to slope)
-      if(!movingLine.hasIntersection(geometryLine))
-         return true;
-      
-      // check if intersection occurs within distance
-      double minX = Math.min(point.x, point.x + distance.x);
-      double minY = Math.min(point.y, point.y + distance.y);
-      double maxX = Math.max(point.x, point.x + distance.x);
-      double maxY = Math.max(point.y, point.y + distance.y);
-      
-      if(intersection.x >= minX && intersection.x <= maxX &&
-         intersection.y >= minY && intersection.y <= maxY)
-      {
-         DoublePair distToCollision = new DoublePair(intersection);
-         distToCollision.subtract(point);
-         collision = true;
-         time = distance.getMagnitude() / distToCollision.getMagnitude();
-         collisionLoc = new DoublePair(intersection);
-         geoType = type;
-         
-         // set normals
-         if(type == GeometryType.ASCENDING_FLOOR || type == GeometryType.DESCENDING_FLOOR)
-            if(distance.y > 0.0)
-               normalY = -1;
-         if(type == GeometryType.ASCENDING_CEILING || type == GeometryType.DESCENDING_CEILING)
-            if(distance.y < 0.0)
-               normalY = 1;
-         if(type == GeometryType.ASCENDING_FLOOR || type == GeometryType.DESCENDING_CEILING)
-            if(distance.x > 0.0)
-               normalX = -1;
-         if(type == GeometryType.ASCENDING_CEILING || type == GeometryType.DESCENDING_FLOOR)
-            if(distance.x < 0.0)
-               normalX = 1;
-      }
-      return true;
    }
    
    public String serialize()

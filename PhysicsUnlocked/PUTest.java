@@ -182,34 +182,6 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
             g2d.setColor(Color.WHITE);
             g2d.fillRect(drawOriginPixelsX, drawOriginPixelsY, tileSizePixels, tileSizePixels);
          }
-         else if(geometry[x][y] == GeometryType.ASCENDING_FLOOR)
-         {
-            int[] xPoints = {drawOriginPixelsX, drawOriginPixelsX + tileSizePixels, drawOriginPixelsX + tileSizePixels};
-            int[] yPoints = {drawOriginPixelsY + tileSizePixels, drawOriginPixelsY + tileSizePixels, drawOriginPixelsY};
-            g2d.setColor(Color.WHITE);
-            g2d.fillPolygon(xPoints, yPoints, 3);
-         }
-         else if(geometry[x][y] == GeometryType.DESCENDING_FLOOR)
-         {
-            int[] xPoints = {drawOriginPixelsX, drawOriginPixelsX, drawOriginPixelsX + tileSizePixels};
-            int[] yPoints = {drawOriginPixelsY, drawOriginPixelsY + tileSizePixels, drawOriginPixelsY + tileSizePixels};
-            g2d.setColor(Color.WHITE);
-            g2d.fillPolygon(xPoints, yPoints, 3);
-         }
-         else if(geometry[x][y] == GeometryType.DESCENDING_CEILING)
-         {
-            int[] xPoints = {drawOriginPixelsX, drawOriginPixelsX + tileSizePixels, drawOriginPixelsX + tileSizePixels};
-            int[] yPoints = {drawOriginPixelsY, drawOriginPixelsY, drawOriginPixelsY + tileSizePixels};
-            g2d.setColor(Color.WHITE);
-            g2d.fillPolygon(xPoints, yPoints, 3);
-         }
-         else if(geometry[x][y] == GeometryType.ASCENDING_CEILING)
-         {
-            int[] xPoints = {drawOriginPixelsX, drawOriginPixelsX, drawOriginPixelsX + tileSizePixels};
-            int[] yPoints = {drawOriginPixelsY, drawOriginPixelsY + tileSizePixels, drawOriginPixelsY};
-            g2d.setColor(Color.WHITE);
-            g2d.fillPolygon(xPoints, yPoints, 3);
-         }
          else // empty
          {
             g2d.setColor(Color.BLACK);
@@ -336,54 +308,7 @@ public class PUTest extends JPanel implements ActionListener, KeyListener, Movin
          geometry[6][geometry[0].length - 5 - (i * 4)] = GeometryType.FULL;
          geometry[7][geometry[0].length - 5 - (i * 4)] = GeometryType.FULL;
       }
-      
-      // slope playground
-      int xStart = width / 2;
-      int y = geometry[0].length - 2;
-      geometry[xStart][y] = GeometryType.ASCENDING_FLOOR;
-      geometry[xStart + 1][y] = GeometryType.FULL;
-      geometry[xStart + 2][y] = GeometryType.FULL;
-      geometry[xStart + 3][y] = GeometryType.DESCENDING_FLOOR;
-      
-      geometry[xStart][y - 4] = GeometryType.FULL;
-      geometry[xStart + 1][y - 4] = GeometryType.FULL;
-      geometry[xStart + 2][y - 4] = GeometryType.FULL;
-      geometry[xStart + 3][y - 4] = GeometryType.FULL;
-      
-      geometry[xStart][y - 7] = GeometryType.DESCENDING_CEILING;
-      geometry[xStart + 1][y - 7] = GeometryType.FULL;
-      geometry[xStart + 2][y - 7] = GeometryType.FULL;
-      geometry[xStart + 3][y - 7] = GeometryType.ASCENDING_CEILING;
-      geometry[xStart][y - 8] = GeometryType.ASCENDING_FLOOR;
-      geometry[xStart + 1][y - 8] = GeometryType.FULL;
-      geometry[xStart + 2][y - 8] = GeometryType.FULL;
-      geometry[xStart + 3][y - 8] = GeometryType.DESCENDING_FLOOR;
-      
-      geometry[10][5] = GeometryType.ASCENDING_FLOOR;
-      geometry[11][5] = GeometryType.DESCENDING_FLOOR;
-      geometry[10][6] = GeometryType.DESCENDING_CEILING;
-      geometry[11][6] = GeometryType.ASCENDING_CEILING;
-      
-      geometry[15][5] = GeometryType.ASCENDING_FLOOR;
-      geometry[18][5] = GeometryType.DESCENDING_FLOOR;
-      geometry[15][8] = GeometryType.DESCENDING_CEILING;
-      geometry[18][8] = GeometryType.ASCENDING_CEILING;
-      
-      
-      xStart += 6;
-      geometry[xStart][y] = GeometryType.ASCENDING_FLOOR;
-      geometry[xStart + 1][y] = GeometryType.FULL;
-      geometry[xStart + 1][y - 1] = GeometryType.FULL;
-      
-      xStart = geometry.length - 7;
-      int yStart = geometry[0].length - 2;
-      for(int i = 0; i < 6; i++)
-      {
-         geometry[xStart + i][yStart - i] = GeometryType.ASCENDING_FLOOR;
-         for(int x = xStart + i + 1; x < geometry.length - 1; x++)
-            geometry[x][yStart - i] = GeometryType.FULL;
-      }
-      
+            
       return geometry;
    }
    

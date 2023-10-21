@@ -211,43 +211,7 @@ public class SweptAABBTest
       assertTrue("Hitscan hits expected target", expectedPoI.equals(result.getPointOfImpact()));
       assertEquals("MovingObject hit hitscan returns correct MovingObject", player, result.getMovingObject());
    }
-   
-   @Test public void slopeTest()
-   {  
-      Vector<GeometryType> typeList = new Vector<GeometryType>();
-      typeList.add(GeometryType.ASCENDING_FLOOR);
-      typeList.add(GeometryType.DESCENDING_FLOOR);
-      typeList.add(GeometryType.ASCENDING_CEILING);
-      typeList.add(GeometryType.DESCENDING_CEILING);
-      for(GeometryType type : typeList)
-      {
-         DoublePair point = new DoublePair(0.5, 0.0);
-         DoublePair distance = new DoublePair(0.0, 5.0);
-         DoublePair boxOrigin = new DoublePair(0.0, 2.0);
-         DoublePair boxSize = new DoublePair(1.0, 1.0);
-         DoublePair expectedImpact = new DoublePair(.5, 2.5);
-         SweptAABB collision = new SweptAABB(point, distance, boxOrigin, boxSize, type);
-         assertTrue("Collision at expected point, moving down into " + type, expectedImpact.equals(collision.getCollisionLoc()));
-         
-         point = new DoublePair(0.0, 2.5);
-         distance = new DoublePair(5.0, 0.0);
-         collision = new SweptAABB(point, distance, boxOrigin, boxSize, type);
-         assertTrue("Collision at expected point, moving right into " + type, expectedImpact.equals(collision.getCollisionLoc()));
-         
-         point = new DoublePair(5.0, 2.5);
-         distance = new DoublePair(-5.0, 0.0);
-         expectedImpact = new DoublePair(.5, 2.5);
-         collision = new SweptAABB(point, distance, boxOrigin, boxSize, type);
-         assertTrue("Collision at expected point, moving left into " + type, expectedImpact.equals(collision.getCollisionLoc()));
-         
-         point = new DoublePair(0.5, 5.0);
-         distance = new DoublePair(0.0, -5.0);
-         expectedImpact = new DoublePair(.5, 2.5);
-         collision = new SweptAABB(point, distance, boxOrigin, boxSize, type);
-         assertTrue("Collision at expected point, moving up into " + type, expectedImpact.equals(collision.getCollisionLoc()));
-      }
-   }
-   
+      
    private PhysicsUnlockedEngine engineSetUp() 
    {
       engine = new PhysicsUnlockedEngine();

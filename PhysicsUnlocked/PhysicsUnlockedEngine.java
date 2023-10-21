@@ -165,7 +165,7 @@ public class PhysicsUnlockedEngine implements Runnable
                   }
                }
                // sort list
-               prospectList = orderByType(prospectList, obj.getLoc());
+               prospectList = orderByClosest(prospectList, obj.getLoc());
                // resolve each potential collision in order
                for(DoublePair dPair : prospectList)   
                {
@@ -178,10 +178,7 @@ public class PhysicsUnlockedEngine implements Runnable
                }
             }
             // move object
-            obj.applySpeeds(secondsElapsed); 
-            // clean up diagonals
-            if(obj.isPushedByGeometry())
-               geometryPush(obj);
+            obj.applySpeeds(secondsElapsed);
          }
       }
    }
@@ -417,7 +414,7 @@ public class PhysicsUnlockedEngine implements Runnable
       double curDistance = 1.1;
       SweptAABB collision = null;
       if(checkPlayerList)
-         {
+      {
          for(MovingBoundingObject prospect : playerList)
          {
             
@@ -505,77 +502,12 @@ public class PhysicsUnlockedEngine implements Runnable
       shiftedPoint.x += xShift;
       shiftedPoint.y += yShift;
       
-      // use corner if the block is angled and we're on the right side of the line
-      if(isInBounds(x, y) && geometry[x][y].isAngled())
-      {
-         DoublePair linePoint = new DoublePair(x + .5, y + .5);
-         Line line = new Line(linePoint, geometry[x][y].getSlope());
-         DoublePair cornerPoint = new DoublePair(shiftedPoint);
-         switch(geometry[x][y])
-         {
-            case ASCENDING_FLOOR :     cornerPoint.x += obj.getHalfWidth();
-                                       cornerPoint.y += obj.getHalfHeight();
-                                       if(line.pointIsAbove(cornerPoint))
-                                       {
-                                          minY = line.getYAtX(cornerPoint.x);
-                                          shiftedPoint = cornerPoint;
-                                       }
-                                       break;
-            case DESCENDING_FLOOR :    cornerPoint.x -= obj.getHalfWidth();
-                                       cornerPoint.y += obj.getHalfHeight();
-                                       if(line.pointIsAbove(cornerPoint))
-                                       {
-                                          minY = line.getYAtX(cornerPoint.x); 
-                                          shiftedPoint = cornerPoint;
-                                       }
-                                       break;
-            case ASCENDING_CEILING :   cornerPoint.x -= obj.getHalfWidth();
-                                       cornerPoint.y -= obj.getHalfHeight();
-                                       if(line.pointIsBelow(cornerPoint))
-                                       {
-                                          maxY = line.getYAtX(cornerPoint.x);
-                                          shiftedPoint = cornerPoint;
-                                       }
-                                       break;
-            case DESCENDING_CEILING :  cornerPoint.x += obj.getHalfWidth();
-                                       cornerPoint.y -= obj.getHalfHeight();
-                                       if(line.pointIsBelow(cornerPoint))
-                                       {
-                                          maxY = line.getYAtX(cornerPoint.x);
-                                          shiftedPoint = cornerPoint;
-                                       }
-                                       break;
-         }
-      }
       return shiftedPoint.x <= maxX &&
              shiftedPoint.x >= minX &&
              shiftedPoint.y <= maxY &&
              shiftedPoint.y >= minY;
    }
-   
-   // returns a list ordered by angled vs. not, with sub-sorting by closeness
-   private Vector<DoublePair> orderByType(Vector<DoublePair> list, DoublePair loc)
-   {
-      Vector<DoublePair> angledList = new Vector<DoublePair>();
-      Vector<DoublePair> squareList = new Vector<DoublePair>();
-      for(DoublePair element : list)
-      {
-         int x = (int)element.x;
-         int y = (int)element.y;
-         if(isInBounds(x, y) && geometry[x][y].isAngled())
-            angledList.add(element);
-         else
-            squareList.add(element);
-      }
-      angledList = orderByClosest(angledList, loc);
-      squareList = orderByClosest(squareList, loc);
-      Vector<DoublePair> newList = new Vector<DoublePair>();
-      for(DoublePair element : angledList)
-         newList.add(element);
-      for(DoublePair element : squareList)
-         newList.add(element);
-      return newList;
-   }
+
    
    // order list by closest
    private Vector<DoublePair> orderByClosest(Vector<DoublePair> list, DoublePair loc)
@@ -616,33 +548,6 @@ public class PhysicsUnlockedEngine implements Runnable
       return geometry[x][y];
    }
    
-   public void geometryPush(MovingBoundingObject obj)
-   {
-      Vector<DoublePair> cornerList = new Vector<DoublePair>();
-      cornerList.add(new DoublePair(obj.getLoc().x - obj.getHalfWidth(), obj.getLoc().y - obj.getHalfHeight()));
-      cornerList.add(new DoublePair(obj.getLoc().x - obj.getHalfWidth(), obj.getLoc().y + obj.getHalfHeight()));
-      cornerList.add(new DoublePair(obj.getLoc().x + obj.getHalfWidth(), obj.getLoc().y + obj.getHalfHeight()));
-      cornerList.add(new DoublePair(obj.getLoc().x + obj.getHalfWidth(), obj.getLoc().y - obj.getHalfHeight()));
-      for(DoublePair corner : cornerList)
-      {
-         if(pointCollidesWithGeometry(corner))
-         {
-            GeometryType geoType = getGeometryType((int)corner.x, (int)corner.y);
-            DoublePair adj = new DoublePair();
-            switch(geoType)
-            {
-               case ASCENDING_FLOOR :     adj.x = -.001; adj.y = -.001; break;
-               case DESCENDING_FLOOR :    adj.x = .001; adj.y = -.001; break;
-               case ASCENDING_CEILING :   adj.x = .001; adj.y = .001; break;
-               case DESCENDING_CEILING :  adj.x = -.001; adj.y = .001; break;
-            }
-            obj.setXLoc(obj.getXLoc() + adj.x);
-            obj.setYLoc(obj.getYLoc() + adj.y);
-         }
-      }
-   }
-   
-   
    public boolean pointCollidesWithGeometry(DoublePair point){return pointCollidesWithGeometry(point, (int)point.x, (int)point.y);}
    public boolean pointCollidesWithGeometry(DoublePair point, int x, int y)
    {
@@ -652,25 +557,10 @@ public class PhysicsUnlockedEngine implements Runnable
       if(xLoc < 0.0 || xLoc > 1.0 ||
          yLoc < 0.0 || yLoc > 1.0)
          return false;
-      GeometryType geoType = getGeometryType(x, y);
-      if(geoType.isAngled())
+      switch(getGeometryType(x, y))
       {
-         Line line = new Line(new DoublePair(x + .5, y + .5), geoType.getSlope());
-         switch(geoType)
-         {
-            case ASCENDING_FLOOR :     return line.pointIsBelow(point);
-            case DESCENDING_FLOOR :    return line.pointIsBelow(point);
-            case ASCENDING_CEILING :   return line.pointIsAbove(point);
-            case DESCENDING_CEILING :  return line.pointIsAbove(point);
-         }
-      }
-      else
-      {
-         switch(geoType)
-         {
-            case FULL : return true;
-            case EMPTY : return false;
-         }
+         case FULL : return true;
+         case EMPTY : return false;
       }
       return true;
    }

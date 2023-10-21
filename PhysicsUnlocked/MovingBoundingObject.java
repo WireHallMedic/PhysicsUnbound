@@ -137,44 +137,8 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
    public synchronized void adjustForCollision(SweptAABB collision)
    {
       DoublePair spd = getSpeed();
-      
-      // rotate to make angle 0.0, we don't need normals because we know there's only a y collision
-      if(collision.getGeoType().isAngled())
-      {
-         switch(collision.getGeoType())
-         {
-            case ASCENDING_FLOOR :     spd.rotate(-DoublePair.EIGHTH_CIRCLE);
-                                       break;
-            case DESCENDING_FLOOR :    spd.rotate(DoublePair.EIGHTH_CIRCLE);
-                                       break;
-            case ASCENDING_CEILING :   spd.rotate(-DoublePair.EIGHTH_CIRCLE);
-                                       break;
-            case DESCENDING_CEILING :  spd.rotate(DoublePair.EIGHTH_CIRCLE);
-                                       break;
-         
-         }
-         spd.y = 0.0;
-         
-         // rotate back
-         switch(collision.getGeoType())
-         {
-            case ASCENDING_FLOOR :     spd.rotate(DoublePair.EIGHTH_CIRCLE);
-                                       break;
-            case DESCENDING_FLOOR :    spd.rotate(-DoublePair.EIGHTH_CIRCLE);
-                                       break;
-            case ASCENDING_CEILING :   spd.rotate(DoublePair.EIGHTH_CIRCLE);
-                                       break;
-            case DESCENDING_CEILING :  spd.rotate(-DoublePair.EIGHTH_CIRCLE);
-                                       break;
-         }
-         setXSpeed(spd.x);
-         setYSpeed(spd.y);
-      }
-      else
-      {
-         setXSpeed(spd.x + (Math.abs(spd.x) * collision.getNormalX()));
-         setYSpeed(spd.y + (Math.abs(spd.y) * collision.getNormalY()));
-      }
+      setXSpeed(spd.x + (Math.abs(spd.x) * collision.getNormalX()));
+      setYSpeed(spd.y + (Math.abs(spd.y) * collision.getNormalY()));
    }
    
    // accelerations
