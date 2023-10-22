@@ -73,4 +73,33 @@ BLOCKS_UP. This type blocks movement from the bottom, and triggers collisions if
 BLOCKS_DOWN. This type blocks movement from the top, and triggers collisions if the object is moving down.
 
 # Implementation
-TODO
+
+##class BoundingBox extends MovingBoundingObject
+
+public BoundingBox(double width, double height)
+*Constructor. Creates a bounding box of the indicated width and height, in tiles.*
+
+public DoublePair getSize()
+public double getWidth()
+public double getHeight()
+public DoublePair getHalfSize()
+public double getHalfWidth()
+public double getHalfHeight()
+*Standard getters.*
+
+public void setWidth(double w)
+public void setHeight(double h)
+public void setSize(double width, double height)
+public void setSize(DoublePair size)
+*Standard setters.*
+
+public int getDrawOriginX(int tileSizePixels)
+public int getDrawOriginY(int tileSizePixels)
+*As all values are kept at double precision, and there's some fudging we need to do when going to int precision for drawing, that is handled by these functions. If you just cast the location to ints, you'll be one pixel up and left of where you actually want to be. Additionally, these return the location of the upper-right corner, acknowledging conventions of java.awt.Graphics.*
+
+public boolean isColliding(BoundingObject that)
+*Returns true if these object overlap, else false.*
+
+public boolean pointIsIn(double x, double y)
+public boolean pointIsIn(DoublePair point)
+*Returns true if the passed point lies inside this box, else false.*
