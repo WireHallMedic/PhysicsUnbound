@@ -1,6 +1,6 @@
-# API
+#API
 
-# igh-Level Concepts
+#High-Level Concepts
 
 ## General Conventions
 This library has a couple of constant conventions. Time is measured in seconds. Distance is measured in tiles. Therefore speeds are in tiles per second, and accelerations in tiles per second per second.
@@ -74,7 +74,7 @@ BLOCKS_DOWN. This type blocks movement from the top, and triggers collisions if 
 
 # Implementation
 
-## class BoundingBox extends MovingBoundingObject
+##class BoundingBox extends MovingBoundingObject
 
 BoundingBox(double width, double height)
 *Constructor. Creates a bounding box of the indicated width and height, in tiles.*
@@ -104,7 +104,7 @@ boolean pointIsIn(double x, double y)
 boolean pointIsIn(DoublePair point)
 *Returns true if the passed point lies inside this box, else false.*
 
-## abstract class BoundingObject
+##abstract class BoundingObject
 
 BoundingObject()
 *Basic constructor.*
@@ -129,7 +129,7 @@ abstract double getWidth();
 abstract double getHeight();
 *Abstract methods that child classes must implement.*
 
-## class DoublePair
+##class DoublePair
 *A convient way to bundle related pairs of doubles. In most places this represents Cartesian coordinates at double precision, but can also be used to hold mathematical vectors (angle and magnitude pairs).*
 
 final static double FULL_CIRCLE
@@ -189,7 +189,7 @@ static double simplifyAngle(double angle)
 *Returns a value which is the angle bound in the range of 0.0, 2 * PI. For example, -1 radian would come back as (2 * PI) - radian, and a full circle + 1 radian would come back as 1 radian.*
 
 
-## class FollowingBB extends BoundingBox
+##class FollowingBB extends BoundingBox
 *This is a bounding box that follows some other MovingBoundingObject. The FollowingBB's loc variable is relative to the leader's loc variable. Setting the loc will change its relative position, and getting the loc will return the sum of this.loc and leader.loc.*
 
 FollowingBB(double width, double height, MovingBoundingObject leader)
@@ -224,7 +224,7 @@ void setLoc(DoublePair p)
 *These set the absolute position of this object. Its new relative position is calculated from this.*
 
 
-## enum GeometryType
+##enum GeometryType
 *An enumerator used for different types of geometry tiles.*
 
 EMPTY
@@ -249,7 +249,7 @@ boolean variableCollision
 *False for EMPTY and FULL, else true.*
 
 
-## class HitscanResult
+##class HitscanResult
 *Holds the results of an instantaneous scan of a ray. The ray might terminate early on a movingBoundingObject, geometry, or go its full distance.*
 
 MovingBoundingObject getMovingObject()
@@ -267,7 +267,7 @@ boolean isMovingObjectImpact()
 HitscanResult(DoublePair origin, DoublePair distance, PhysicsUnlockedEngine engine, int team)
 *Calculate the hitscan. The team value here refers to the constants listed in PhysicsUnlockedEngine.*
 
-## class Line
+##class Line
 *This class represents a mathematical line, in the form of y = mx + b. As this form cannot represent a vertical line (where the slope is infinite), Double.MAX_VALUE is used in that case.*
 
 Line(DoublePair origin, DoublePair slope)
@@ -309,7 +309,7 @@ double getYAtX(double thatX)
 *Returns the y value of the line at the given x value.*
 
 
-## abstract class MovingBoundingObject extends BoundingObject implements MovingCollidable
+##abstract class MovingBoundingObject extends BoundingObject implements MovingCollidable
 *An abstract class for moving bounding objects. Speeds are in tiles per second. Acceleration and deceleration are in tiles per second per second.*
 
 MovingBoundingObject()
@@ -404,7 +404,7 @@ void addCollisionListener(MovingCollisionListener listener)
 void removeCollisionListener(MovingCollisionListener listener)
 *Remove a listener.*
 
-## interface MovingCollidable
+##interface MovingCollidable
 *An interface for moving objects that can collide. The implementation for this is not explicitly threaded; it occurs on the engine's thread.*
 
 void movingCollisionOccured(MovingCollision mc)
@@ -417,7 +417,7 @@ void removeCollisionListener(MovingCollisionListener listener)
 *Remove a listener.*
 
 
-## class MovingCollision
+##class MovingCollision
 *A class for bundling up information about a non-push collision.*
 
 MovingCollision(MovingBoundingObject s, MovingBoundingObject mbo)
@@ -436,15 +436,15 @@ boolean isNonGeometryCollision()
 *True if this is a collision with a movingBoundingObject, else false. Logically equivalent to getOtherObject() != null.*
 
 
-## interface MovingCollisionListener
+##interface MovingCollisionListener
 *An interface for object to be notified when non-push collisions occur.*
 
 void movingCollisionOccured(MovingCollision mc)
 *Function to be called when a collision happens.*
 
 
-## class PhysicsUnlockedEngine implements Runnable
-*The physics engine. Manages movement and speeds for the objects given to it, taking into account the geometry given to it. Some public methods have not been listed here, in the case that they are only marked public for testing reasons.*
+##class PhysicsUnlockedEngine implements Runnable
+*The physics engine. Manages movement and speeds for the objects given to it, taking into account the geometry given to it. Some public methods have not been listed here, in the case that they are only marked public for testing reasons.
 
 static final int PLAYER
 static final int PLAYER_PROJECTILE
@@ -530,7 +530,7 @@ boolean pointCollidesWithGeometry(DoublePair point, int x, int y)
 *Returns true if the point collides with the GeometryType of the indexed tile, else false.*
 
 
-## class SweptAABB
+##class SweptAABB
 *This is an implementation of swept axis-aligned bounding boxes, also called projected rectangle collision.
 
 All calculations are done when the constructor is called. The object is essentially the return value of a function. 
@@ -553,6 +553,7 @@ SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int ge
 SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY, GeometryType type)
 *A scan a movingBoundingObject and geometry. If no GeometryType is passed in, GeometryType.FULL is the default.*
 
+// for hitscan
 SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY)
 SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY, GeometryType type)
 *A scan hitscans and geometry. If no GeometryType is passed in, GeometryType.FULL is the default.*
@@ -572,8 +573,14 @@ boolean isCollision()
 DoublePair getCollisionLoc()
 *Returns the x, y coordinates at which the collision occurs. In the case where the moving object is a box, this point is on a line drawn from the center of the box in the direction of movement.*
 
+
+
+
+
+
+
+
 boolean shouldIgnore(DoublePair point, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
-*Returns true if the GeometryType should be ignored; for example, a that prevents right-ward movement should be ignored by a left-moving object.*
+
 
 String serialize()
-*String representation of this object.*
