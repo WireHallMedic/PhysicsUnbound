@@ -267,9 +267,8 @@ boolean isMovingObjectImpact()
 HitscanResult(DoublePair origin, DoublePair distance, PhysicsUnlockedEngine engine, int team)
 *Calculate the hitscan. The team value here refers to the constants listed in PhysicsUnlockedEngine.*
 
-## class Line
+##class Line
 *This class represents a mathematical line, in the form of y = mx + b. As this form cannot represent a vertical line (where the slope is infinite), Double.MAX_VALUE is used in that case.*
-
 
 Line(DoublePair origin, DoublePair slope)
 *Constructor. Sets the line from a point, and a slope (change in x, change in y).*
@@ -308,3 +307,99 @@ boolean pointIsAbove(DoublePair thatPoint)
 
 double getYAtX(double thatX)
 *Returns the y value of the line at the given x value.*
+
+
+##abstract class MovingBoundingObject extends BoundingObject implements MovingCollidable
+*An abstract class for moving bounding objects. Speeds are in tiles per second. Acceleration and deceleration are in tiles per second per second.*
+
+MovingBoundingObject()
+*Simple constructor.*
+
+double getXSpeed()
+double getYSpeed()
+DoublePair getSpeed()
+double getXAcceleration()
+double getYAcceleration()
+DoublePair getAcceleration()
+*Basic getters.*
+
+double getXDeceleration()
+double getYDeceleration()
+DoublePair getDeceleration()
+*Basic getters. Decelration is only applied if the object has 0.0 for acceleration on that axis. Deceleration is an unsigned value, and moves the speed towards 0.0.*
+
+double getXMaxSpeed()
+double getYMaxSpeed()
+DoublePair getMaxSpeed()
+*Basic getters. Max speed is a cap on acceleration; using setSpeed() ignores maxes.*
+
+boolean isAffectedByGravity()
+*True if the object is affected by gravity, else false.*
+
+boolean isPushedByGeometry()
+*True if the object is prevented from entering solid geometry.*
+
+abstract int getDrawOriginX(int tileSizePixels)
+abstract int getDrawOriginY(int tileSizePixels)
+*Returns the location to start drawing the shape, in pixels.*
+
+synchronized void setXSpeed(double x)
+synchronized void setYSpeed(double y)
+synchronized void setSpeed(double x, double y)
+synchronized void setSpeed(DoublePair dp)
+synchronized void setXAcceleration(double x)
+synchronized void setYAcceleration(double y)
+synchronized void setAcceleration(double x, double y)
+*Basic setters.*
+
+synchronized void setXDeceleration(double x)
+synchronized void setYDeceleration(double y)
+synchronized void setDeceleration(double x, double y)
+*Basic setters. Decelration is only applied if the object has 0.0 for acceleration on that axis. Deceleration is an unsigned value, and moves the speed towards 0.0.*
+
+synchronized void setXMaxSpeed(double x)
+synchronized void setYMaxSpeed(double y)
+synchronized void setMaxSpeed(double x, double y)
+*Basic setters. Max speed is a cap on acceleration; using setSpeed() ignores maxes.*
+
+synchronized void setAffectedByGravity(boolean a)
+*True if the object is affected by gravity, else false.*
+
+synchronized void setPushedByGeometry(boolean c)
+*True if the object is prevented from entering solid geometry.*
+
+synchronized void applyXImpulse(double x)
+*Adjust the x speed.*
+
+synchronized void applyYImpulse(double y)
+*Adjust the y speed.*
+
+synchronized void applyImpulse(double x, double y)
+*Adjust the x and y speeds.*
+
+synchronized void applySpeeds(double secondsElapsed)
+*Apply the speeds to the position. Let the engine do this.*
+
+synchronized void applyGravityImpulse(double speed, double terminalVelocity)
+*Gravity is like other y-impulses, except limited by terminalVelocity.*
+
+synchronized int[] getPotentialCollisionOrigin(double seconds)
+*Returns the upper-left tile location (x, y) to begin seraching for geometric collisions.*
+
+synchronized int[] getPotentialCollisionEnd(double seconds)
+*Returns the lower-right tile location (x, y) to end seraching for geometric collisions.*
+
+synchronized void adjustForCollision(SweptAABB collision)
+*Adjust speeds to stop short of collision.*
+
+synchronized void applyAccelerations(double secondsElapsed)
+*Apply the accelerations to speed. Let the engine do this.*
+
+void movingCollisionOccured(MovingCollision mc)
+*Notifies listeners that a collision has occured.*
+
+void addCollisionListener(MovingCollisionListener listener)
+*Add a listener to be notified when a collision occurs.*
+
+void removeCollisionListener(MovingCollisionListener listener)
+*Remove a listener.*

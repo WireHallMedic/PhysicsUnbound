@@ -45,8 +45,8 @@ public abstract class MovingBoundingObject extends BoundingObject implements Mov
 	public synchronized void setXAcceleration(double x){acceleration.x = x;}
 	public synchronized void setYAcceleration(double y){acceleration.y = y;}
    public synchronized void setAcceleration(double x, double y){setXAcceleration(x); setYAcceleration(y);}
-	public synchronized void setXDeceleration(double x){deceleration.x = x;}
-	public synchronized void setYDeceleration(double y){deceleration.y = y;}
+	public synchronized void setXDeceleration(double x){deceleration.x = Math.abs(x);}
+	public synchronized void setYDeceleration(double y){deceleration.y = Math.abs(y);}
    public synchronized void setDeceleration(double x, double y){setXDeceleration(x); setYDeceleration(y);}
 	public synchronized void setXMaxSpeed(double x){maxSpeed.x = x;}
 	public synchronized void setYMaxSpeed(double y){maxSpeed.y = y;}
