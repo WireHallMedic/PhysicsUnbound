@@ -418,7 +418,7 @@ void removeCollisionListener(MovingCollisionListener listener)
 
 
 ##class MovingCollision
-*A class for bundling up information about a collision.*
+*A class for bundling up information about a non-push collision.*
 
 MovingCollision(MovingBoundingObject s, MovingBoundingObject mbo)
 *Constructor. For MBO on geometry collisions, the second argument is null.*
@@ -436,4 +436,95 @@ boolean isNonGeometryCollision()
 *True if this is a collision with a movingBoundingObject, else false. Logically equivalent to getOtherObject() != null.*
 
 
+##interface MovingCollisionListener
+*An interface for object to be notified when non-push collisions occur.*
 
+void movingCollisionOccured(MovingCollision mc)
+*Function to be called when a collision happens.*
+
+
+##class PhysicsUnlockedEngine implements Runnable
+*The physics engine. Manages movement and speeds for the objects given to it, taking into account the geometry given to it. Some public methods have not been listed here, in the case that they are only marked public for testing reasons.
+
+static final int PLAYER
+static final int PLAYER_PROJECTILE
+static final int ENEMY
+static final int ENEMY_PROJECTILE
+static final int ENVIRONMENT
+*Constants for culling potential collisions and hitscan results.*
+
+PhysicsUnlockedEngine()
+*Basic constructor. runFlag is initially set to false, you will need to set it to true to being the engine.*
+
+double getGravity()
+double getTerminalVelocity()
+Vector<MovingBoundingObject> getObjList(){return objList;}
+GeometryType[][] getGeometry()
+boolean getRunFlag()
+*Basic getters.*
+
+int getCPS()
+*The engine keeps tracks of how many cycles per second it executes. This is the getter for that number, which is updated once per second.*
+
+void setGravity(double g)
+void setTerminalVelocity(double t)
+void setObjList(Vector<MovingBoundingObject> newList)
+void setGeometry(GeometryType[][] g)
+*Basic setters.*
+
+void setRunFlag(boolean rf)
+*Setter for the run flag. If this is false, the engine will idle until it is turned back to true.*
+
+void terminate()
+*This allows the engine thread to terminate.*
+
+void add(MovingBoundingObject obj)
+void add(MovingBoundingObject obj, int list)
+*Adds a movingBoundingObject to have physics done to it. If no list is specified (see the constants for this class), ENVIRONMENT is the default.*
+
+void remove(MovingBoundingObject obj)
+*Removes a movingBoundingObject.*
+
+boolean touchingFloor(MovingBoundingObject obj)
+*Returns true if the object is touching geometry in the Y+ direction.*
+
+boolean touchingCeiling(MovingBoundingObject obj)
+*Returns true if the object is touching geometry in the Y- direction.*
+
+boolean touchingLeftWall(MovingBoundingObject obj)
+*Returns true if the object is touching geometry in the X- direction.*
+
+boolean touchingRightWall(MovingBoundingObject obj)
+*Returns true if the object is touching geometry in the X+ direction.*
+
+DoublePair getOrthoGeometryCollisionNormals(MovingBoundingObject obj)
+*Returns a pair of normals, checking one tile up, down, left, and right. Not intended for sizes greater than 1.0.*
+
+boolean isCollidingWithGeometry(MovingBoundingObject obj)
+*Returns true if the object is overlapping geometry.*
+
+HitscanResult calculateHitscan(DoublePair origin, DoublePair distance)
+HitscanResult calculateHitscan(DoublePair origin, DoublePair distance, int scanType)
+*Does a hitscan. If no scanType is specified (see constants for this class), ENVIRONMENT is defaulted.*
+
+MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance)
+MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance, int scanType)
+*Does a hitscan, returning the movingBoundingObject hit or null if no such hit occured. If no scanType is specified (see constants for this class), ENVIRONMENT is defaulted.*
+
+DoublePair getHitscanImpactGeometry(DoublePair origin, DoublePair distance)
+*Does a hitscan and returns a point within the tile hit. This position is relative to the origin, not an absolute position.*
+
+boolean isInBounds(int x, int y)
+*Returns true if the x, y index passed in is within the geometry array, else false.*
+
+static double getDistanceMetric(DoublePair boxLoc, DoublePair loc)
+*Returns a^2 + b^2 for quickly comparing distances.*
+
+GeometryType getGeometryType(int x, int y)
+*Returns the GeometryType of the indexed tile, or GeometryType.FULL if the index is out of bounds.*
+
+boolean pointCollidesWithGeometry(DoublePair point)
+*Returns true if the point collides with the GeometryType of the tile in which it lies, else false.*
+
+boolean pointCollidesWithGeometry(DoublePair point, int x, int y)
+*Returns true if the point collides with the GeometryType of the indexed tile, else false.*

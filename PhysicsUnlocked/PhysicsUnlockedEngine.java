@@ -69,7 +69,7 @@ public class PhysicsUnlockedEngine implements Runnable
    }
    
    // add a moving object
-   public void add(MovingBoundingObject obj){add(obj, -1);}
+   public void add(MovingBoundingObject obj){add(obj, ENVIRONMENT);}
    public void add(MovingBoundingObject obj, int list)
    {
       objList.add(obj);
