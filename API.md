@@ -223,3 +223,27 @@ void setLoc(double x, double y)
 void setLoc(DoublePair p)
 *These set the absolute position of this object. Its new relative position is calculated from this.*
 
+
+##enum GeometryType
+*An enumerator used for different types of geometry tiles.*
+
+EMPTY
+*A fully passable tile.*
+
+FULL
+*A fully impassable tile.*
+
+BLOCKS_RIGHT
+*A tile that is impassable if the moving object is moving to the right, else passable.*
+
+BLOCKS_LEFT
+*A tile that is impassable if the moving object is moving to the left, else passable.*
+
+BLOCKS_UP
+*A tile that is impassable if the moving object is moving up, else passable.*
+
+BLOCKS_DOWN
+*A tile that is impassable if the moving object is moving down, else passable.*
+
+boolean variableCollision
+*False for EMPTY and FULL, else true.*
