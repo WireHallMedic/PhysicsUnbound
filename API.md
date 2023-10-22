@@ -247,3 +247,22 @@ BLOCKS_DOWN
 
 boolean variableCollision
 *False for EMPTY and FULL, else true.*
+
+
+##class HitscanResult
+*Holds the results of an instantaneous scan of a ray. The ray might terminate early on a movingBoundingObject, geometry, or go its full distance.*
+
+MovingBoundingObject getMovingObject()
+*If the ray struck a movingBoundingObject before anything else, this is that object. Else null.*
+
+DoublePair getPointOfImpact()
+*If the ray struck something, this point where that happened. Else the sum of the origin and distance.*
+
+boolean isGeometryImpact()
+*If the ray struck something, this point where that happened. Else the sum of the origin and distance.*
+
+boolean isMovingObjectImpact()
+*True if the scan hit a movingBoundingObject, else false.*
+
+HitscanResult(DoublePair origin, DoublePair distance, PhysicsUnlockedEngine engine, int team)
+*Calculate the hitscan. The team value here refers to the constants listed in PhysicsUnlockedEngine.*

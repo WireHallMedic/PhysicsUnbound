@@ -246,6 +246,12 @@ public class SweptAABBTest
       assertTrue("MovingObject hit hitscan registers as MovingObject", result.isMovingObjectImpact());
       assertTrue("Hitscan hits expected target", expectedPoI.equals(result.getPointOfImpact()));
       assertEquals("MovingObject hit hitscan returns correct MovingObject", player, result.getMovingObject());
+      
+      origin = new DoublePair(6.0, 1.0);
+      distance = new DoublePair(0.0, 2.0);
+      expectedPoI = new DoublePair(6.0, 3.0);
+      result = engine.calculateHitscan(origin, distance);
+      assertTrue("Hitscan that doesn't hit anything has expected PoI", expectedPoI.equals(result.getPointOfImpact()));
    }
       
    private PhysicsUnlockedEngine engineSetUp() 

@@ -18,13 +18,7 @@ public class HitscanResult
 	public DoublePair getPointOfImpact(){return pointOfImpact;}
 	public boolean isGeometryImpact(){return geometryImpact;}
 	public boolean isMovingObjectImpact(){return movingObjectImpact;}
-
-
-	public void setMovingObject(MovingBoundingObject m){movingObject = m;}
-	public void setPointOfImpact(DoublePair p){pointOfImpact = p;}
-	public void setGeometryImpact(boolean g){geometryImpact = g;}
-	public void setMovingObjectImpact(boolean m){movingObjectImpact = m;}
-
+   
 
    public HitscanResult(DoublePair origin, DoublePair distance, PhysicsUnlockedEngine engine, int team)
    {
@@ -73,6 +67,10 @@ public class HitscanResult
       {
          geometryImpact = true;
          pointOfImpact = geoPoI;
+      }
+      if(!geometryImpact && !movingObjectImpact)
+      {
+         pointOfImpact = DoublePair.sum(origin, distance);
       }
    }
 }
