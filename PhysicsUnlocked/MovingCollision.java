@@ -16,10 +16,6 @@ public class MovingCollision
 	public boolean isNonGeometryCollision(){return !isGeometryCollision();}
    public MovingBoundingObject getSource(){return source;}
 
-
-	public void setMovingBoundingObject(MovingBoundingObject m){otherObject = m;}
-   public void setSource(MovingBoundingObject s){source = s;}
-
    public MovingCollision(MovingBoundingObject s, MovingBoundingObject mbo)
    {
       source = s;

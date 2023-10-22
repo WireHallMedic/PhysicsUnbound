@@ -403,3 +403,37 @@ void addCollisionListener(MovingCollisionListener listener)
 
 void removeCollisionListener(MovingCollisionListener listener)
 *Remove a listener.*
+
+##interface MovingCollidable
+*An interface for moving objects that can collide. The implementation for this is not explicitly threaded; it occurs on the engine's thread.*
+
+void movingCollisionOccured(MovingCollision mc)
+*Notifies listeners that a collision has occured.*
+
+void addCollisionListener(MovingCollisionListener listener)
+*Add a listener to be notified when a collision occurs.*
+
+void removeCollisionListener(MovingCollisionListener listener)
+*Remove a listener.*
+
+
+##class MovingCollision
+*A class for bundling up information about a collision.*
+
+MovingCollision(MovingBoundingObject s, MovingBoundingObject mbo)
+*Constructor. For MBO on geometry collisions, the second argument is null.*
+
+MovingBoundingObject getSource()
+*Returns the first movingBoundingObject in the collision.*
+
+MovingBoundingObject getOtherObject()
+*Returns the second movingBoundingObject in the collision, or null if there is no such object.*
+
+boolean isGeometryCollision()
+*True if this is a collision with geometry, else false. Logically equivalent to getOtherObject() == null.*
+
+boolean isNonGeometryCollision()
+*True if this is a collision with a movingBoundingObject, else false. Logically equivalent to getOtherObject() != null.*
+
+
+
