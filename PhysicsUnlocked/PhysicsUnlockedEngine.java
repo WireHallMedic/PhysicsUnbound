@@ -489,9 +489,26 @@ public class PhysicsUnlockedEngine implements Runnable
    private boolean collisionCheckGeometry(int x, int y, MovingBoundingObject obj){return collisionCheckGeometry(x, y, obj, 0.0, 0.0);}
    private boolean collisionCheckGeometry(int x, int y, MovingBoundingObject obj, double xShift, double yShift)
    {
-      // in bounds, but not a solid tile
-      if(isInBounds(x, y) && geometry[x][y] == GeometryType.EMPTY)
-         return false;
+      // in bounds, check for disqualifying condintions
+      if(isInBounds(x, y))
+      {
+         switch(geometry[x][y])
+         {
+            case EMPTY : return false;                         // can't collide, ignore
+            case BLOCKS_RIGHT :  if(obj.getXSpeed() <= 0.0)    // ignore if not moving right
+                                    return false;
+                                 break;
+            case BLOCKS_LEFT :   if(obj.getXSpeed() >= 0.0)    // ignore if not moving left
+                                    return false;
+                                 break;
+            case BLOCKS_UP :     if(obj.getYSpeed() >= 0.0)    // ignore if not moving up
+                                    return false;
+                                 break;
+            case BLOCKS_DOWN :   if(obj.getYSpeed() <= 0.0)    // ignore if not moving down
+                                    return false;
+                                 break;
+         }
+      }
       
       // OOB or solid tile
       double minX = x - obj.getHalfWidth();
