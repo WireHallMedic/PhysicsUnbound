@@ -128,3 +128,62 @@ abstract double getHalfHeight();
 abstract double getWidth();
 abstract double getHeight();
 *Abstract methods that child classes must implement.*
+
+##class DoublePair
+*A convient way to bundle related pairs of doubles. In most places this represents Cartesian coordinates at double precision, but can also be used to hold mathematical vectors (angle and magnitude pairs).*
+
+final static double FULL_CIRCLE
+final static double THREE_QUARTER_CIRCLE
+final static double HALF_CIRCLE
+final static double QUARTER_CIRCLE
+final static double EIGHTH_CIRCLE
+*Constants for common values. Angles are in radians, rotation is counter-clockwise.*
+
+double x
+*The x component of this object.*
+
+double y
+*The y component of this object.*
+
+DoublePair(double xVal, double yVal)
+*Basic constructor.*
+
+DoublePair()
+*Empty constructor, initializes to 0.0, 0.0.*
+
+DoublePair(DoublePair that)
+*Copy constructor.*
+
+void add(DoublePair that)
+*Adds that DoublePair's values to this one's, does not alter that.*
+
+void subtract(DoublePair that)
+*Subtracts that DoublePair's values from this one's, does not alter that.*
+
+String serialize()
+*String representation of this object. Only displays three decimals of precision for readability.*
+
+void rotate(double theta)
+*Rotates this objects values relative to 0.0, 0.0. For example, if the initial values are 1.0, 0.0 (straight right), and it is rotated by QUARTER_CIRCLE, the values will then be 0.0, -1.0 (stright up).*
+
+double getAngle()
+*Returns the angle (in radians) from 0.0, 0.0 to the x, y values of this object.*
+
+double getMagnitude()
+*Returns the distance from 0.0, 0.0 to the x, y values of this object.*
+
+boolean equals(DoublePair that)
+boolean equals(DoublePair that, double threshold)
+*Returns whether the x, y values of that are equal to the x, y values of this. Threshold is a level of precision; .01 = .015 if threshold is .01, for example. Since we're doing double math, we need fuzzy matching. If no threshold is provided, .001 is used.*
+
+static DoublePair sum(DoublePair a, DoublePair b)
+*Returns a new DoublePair that is the sum of a and b.*
+
+static DoublePair difference(DoublePair a, DoublePair b)
+*Returns a new DoublePair that is the difference between a and b.*
+
+static DoublePair getFromAngle(double theta)
+*Returns a new DoublePair representing the point at angle theta and magnitude 1.0.*
+
+static double simplifyAngle(double angle)
+*Returns a value which is the angle bound in the range of 0.0, 2 * PI. For example, -1 radian would come back as (2 * PI) - radian, and a full circle + 1 radian would come back as 1 radian.*
