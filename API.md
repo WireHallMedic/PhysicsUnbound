@@ -45,88 +45,88 @@ There are two types of collisions; those between MovingBoundingObjects that are 
 
 For all other collisions (MovingBoundingObjects with pushedByGeometry == false against geometry, and two MovingBoundingObjects colliding), each object throws an event. You will want to set up listeners for this.
 
-The engine maintains five lists, which dictates what objects on that list can collide with:
-PLAYER: Collides with ENEMY, ENEMY_PROJECTILE, ENVIRONMENT, and geometry.
-PLAYER_PROJECTILE: Collides with ENEMY, ENVIRONMENT, and geometry.
-ENEMY: Collides with PLAYER, PLAYER_PROJECTILE, ENVIRONMENT, and geometry.
-ENEMY_PROJECTILE: Collides with PLAYER, ENVIRONMENT, and geometry.
-ENVIRONMENT: Collides with everything, including other ENVIRONMENT objects.
+The engine maintains five lists, which dictates what objects on that list can collide with:<br>
+PLAYER: Collides with ENEMY, ENEMY_PROJECTILE, ENVIRONMENT, and geometry.<br>
+PLAYER_PROJECTILE: Collides with ENEMY, ENVIRONMENT, and geometry.<br>
+ENEMY: Collides with PLAYER, PLAYER_PROJECTILE, ENVIRONMENT, and geometry.<br>
+ENEMY_PROJECTILE: Collides with PLAYER, ENVIRONMENT, and geometry.<br>
+ENVIRONMENT: Collides with everything, including other ENVIRONMENT objects.<br>
 
 These events are MovingCollision objects. They will always have a source, the object making the event. If it's a non-geometric collision, they will have an otherObject, the thing they bumped into. Otherwise, otherObject will be null.
 
 To be clear, when a and b collide, there will be two events; one with source = a, otherObject = b and one with source = b, otherObject = a. The engine has no concept of iFrames, so that might be something you'll need in your project.
 
 ## Hitscans
-A hitscan is when you figure out where the first collision would occur on a given vector (a ray with a defined length). The PhysicsUnlocedEngine.calculateHitscan() will return a HitscanResult object. It culls what it cannot hit by the same object types listed under Collisions, above. A HitscanResult object contains the following:
-MovingBoundingObject movingObject: The MovingBoundingObject that got hit, or null if none.
-DoublePair pointOfImpact: The x, y coordinates (in tiles) of where the ray terminated.
-boolean geometryImpact: True if the ray terminated early by hitting geometry, else false.
-boolean movingObjectImpact: True if the ray terminated early by hitting a MovingBoundingObject, else false.
+A hitscan is when you figure out where the first collision would occur on a given vector (a ray with a defined length). The PhysicsUnlocedEngine.calculateHitscan() will return a HitscanResult object. It culls what it cannot hit by the same object types listed under Collisions, above. A HitscanResult object contains the following:<br>
+MovingBoundingObject movingObject: The MovingBoundingObject that got hit, or null if none.<br>
+DoublePair pointOfImpact: The x, y coordinates (in tiles) of where the ray terminated.<br>
+boolean geometryImpact: True if the ray terminated early by hitting geometry, else false.<br>
+boolean movingObjectImpact: True if the ray terminated early by hitting a MovingBoundingObject, else false.<br>
 
 ## GeometryType
-This enumerator holds the tile types for geometry. They are as follows:
-EMPTY. This type does not block movement or collide.
-FULL. This type blocks movement and collides.
-BLOCKS_RIGHT. This type blocks movement from the left, and triggers collisions if the object is moving to the right.
-BLOCKS_LEFT. This type blocks movement from the right, and triggers collisions if the object is moving to the left.
-BLOCKS_UP. This type blocks movement from the bottom, and triggers collisions if the object is moving up.
-BLOCKS_DOWN. This type blocks movement from the top, and triggers collisions if the object is moving down.
+This enumerator holds the tile types for geometry. They are as follows:<br>
+EMPTY. This type does not block movement or collide.<br>
+FULL. This type blocks movement and collides.<br>
+BLOCKS_RIGHT. This type blocks movement from the left, and triggers collisions if the object is moving to the right.<br>
+BLOCKS_LEFT. This type blocks movement from the right, and triggers collisions if the object is moving to the left.<br>
+BLOCKS_UP. This type blocks movement from the bottom, and triggers collisions if the object is moving up.<br>
+BLOCKS_DOWN. This type blocks movement from the top, and triggers collisions if the object is moving down.<br>
 
 # Implementation
 
 ## class BoundingBox extends MovingBoundingObject
 
-BoundingBox(double width, double height)
+BoundingBox(double width, double height)<br>
 *Constructor. Creates a bounding box of the indicated width and height, in tiles.*
 
-DoublePair getSize()
-double getWidth()
-double getHeight()
-DoublePair getHalfSize()
-double getHalfWidth()
-double getHalfHeight()
+DoublePair getSize()<br>
+double getWidth()<br>
+double getHeight()<br>
+DoublePair getHalfSize()<br>
+double getHalfWidth()<br>
+double getHalfHeight()<br>
 *Standard getters.*
 
-void setWidth(double w)
-void setHeight(double h)
-void setSize(double width, double height)
-void setSize(DoublePair size)
-*Standard setters.*
+void setWidth(double w)<br>
+void setHeight(double h)<br>
+void setSize(double width, double height)<br>
+void setSize(DoublePair size)<br>
+*Standard setters.*<br>
 
-int getDrawOriginX(int tileSizePixels)
-int getDrawOriginY(int tileSizePixels)
+int getDrawOriginX(int tileSizePixels)<br>
+int getDrawOriginY(int tileSizePixels)<br>
 *As all values are kept at double precision, and there's some fudging we need to do when going to int precision for drawing, that is handled by these functions. If you just cast the location to ints, you'll be one pixel up and left of where you actually want to be. Additionally, these return the location of the upper-right corner, acknowledging conventions of java.awt.Graphics.*
 
-boolean isColliding(BoundingObject that)
+boolean isColliding(BoundingObject that)<br>
 *Returns true if these object overlap, else false.*
 
-boolean pointIsIn(double x, double y)
-boolean pointIsIn(DoublePair point)
+boolean pointIsIn(double x, double y)<br>
+boolean pointIsIn(DoublePair point)<br>
 *Returns true if the passed point lies inside this box, else false.*
 
 ## abstract class BoundingObject
 
-BoundingObject()
+BoundingObject()<br>
 *Basic constructor.*
 
-double getXLoc()
-double getYLoc()
-DoublePair getLoc()
+double getXLoc()<br>
+double getYLoc()<br>
+DoublePair getLoc()<br>
 *Basic getters. Location is in tiles, and refers to the centerpoint of the object.*
 
-void setXLoc(double x)
-void setYLoc(double y)
-void setLoc(double x, double y)
-void setLoc(DoublePair p)
+void setXLoc(double x)<br>
+void setYLoc(double y)<br>
+void setLoc(double x, double y)<br>
+void setLoc(DoublePair p)<br>
 *Basic getters. Location is in tiles, and refers to the centerpoint of the object.*
 
-abstract boolean isColliding(BoundingObject that);
-abstract boolean pointIsIn(double x, double y);
-abstract boolean pointIsIn(DoublePair point);
-abstract double getHalfWidth();
-abstract double getHalfHeight();
-abstract double getWidth();
-abstract double getHeight();
+abstract boolean isColliding(BoundingObject that)<br>
+abstract boolean pointIsIn(double x, double y)<br>
+abstract boolean pointIsIn(DoublePair point)<br>
+abstract double getHalfWidth()<br>
+abstract double getHalfHeight()<br>
+abstract double getWidth()<br>
+abstract double getHeight()<br>
 *Abstract methods that child classes must implement.*
 
 ## class DoublePair
@@ -145,82 +145,82 @@ double x
 double y
 *The y component of this object.*
 
-DoublePair(double xVal, double yVal)
+DoublePair(double xVal, double yVal)<br>
 *Basic constructor.*
 
-DoublePair()
+DoublePair()<br>
 *Empty constructor, initializes to 0.0, 0.0.*
 
-DoublePair(DoublePair that)
+DoublePair(DoublePair that)<br>
 *Copy constructor.*
 
-void add(DoublePair that)
+void add(DoublePair that)<br>
 *Adds that DoublePair's values to this one's, does not alter that.*
 
-void subtract(DoublePair that)
+void subtract(DoublePair that)<br>
 *Subtracts that DoublePair's values from this one's, does not alter that.*
 
-String serialize()
+String serialize()<br>
 *String representation of this object. Only displays three decimals of precision for readability.*
 
-void rotate(double theta)
+void rotate(double theta)<br>
 *Rotates this objects values relative to 0.0, 0.0. For example, if the initial values are 1.0, 0.0 (straight right), and it is rotated by QUARTER_CIRCLE, the values will then be 0.0, -1.0 (stright up).*
 
-double getAngle()
+double getAngle()<br>
 *Returns the angle (in radians) from 0.0, 0.0 to the x, y values of this object.*
 
-double getMagnitude()
+double getMagnitude()<br>
 *Returns the distance from 0.0, 0.0 to the x, y values of this object.*
 
-boolean equals(DoublePair that)
-boolean equals(DoublePair that, double threshold)
+boolean equals(DoublePair that)<br>
+boolean equals(DoublePair that, double threshold)<br>
 *Returns whether the x, y values of that are equal to the x, y values of this. Threshold is a level of precision; .01 = .015 if threshold is .01, for example. Since we're doing double math, we need fuzzy matching. If no threshold is provided, .001 is used.*
 
-static DoublePair sum(DoublePair a, DoublePair b)
+static DoublePair sum(DoublePair a, DoublePair b)<br>
 *Returns a new DoublePair that is the sum of a and b.*
 
-static DoublePair difference(DoublePair a, DoublePair b)
+static DoublePair difference(DoublePair a, DoublePair b)<br>
 *Returns a new DoublePair that is the difference between a and b.*
 
-static DoublePair getFromAngle(double theta)
+static DoublePair getFromAngle(double theta)<br>
 *Returns a new DoublePair representing the point at angle theta and magnitude 1.0.*
 
-static double simplifyAngle(double angle)
+static double simplifyAngle(double angle)<br>
 *Returns a value which is the angle bound in the range of 0.0, 2 * PI. For example, -1 radian would come back as (2 * PI) - radian, and a full circle + 1 radian would come back as 1 radian.*
 
 
 ## class FollowingBB extends BoundingBox
 *This is a bounding box that follows some other MovingBoundingObject. The FollowingBB's loc variable is relative to the leader's loc variable. Setting the loc will change its relative position, and getting the loc will return the sum of this.loc and leader.loc.*
 
-FollowingBB(double width, double height, MovingBoundingObject leader)
+FollowingBB(double width, double height, MovingBoundingObject leader)<br>
 *Constructor. In addition to the height and width for a standard BoundingBox, another MovingBoundingObject is passed in as the leader.*
 
-MovingBoundingObject getLeader()
+MovingBoundingObject getLeader()<br>
 *Standard getter.*
 
-double getRelativeXLoc()
-double getRelativeYLoc()
-DoublePair getRelativeLoc()
+double getRelativeXLoc()<br>
+double getRelativeYLoc()<br>
+DoublePair getRelativeLoc()<br>
 *This returns the object's location relative to the leader.*
 
-void setLeader(MovingBoundingObject l)
+void setLeader(MovingBoundingObject l)<br>
 *Standard setter.*
 
-void setRelativeXLoc(double x)
-void setRelativeYLoc(double y)
-void setRelativeLoc(double x, double y)
-void setRelativeLoc(DoublePair l)
+void setRelativeXLoc(double x)<br>
+void setRelativeYLoc(double y)<br>
+void setRelativeLoc(double x, double y)<br>
+void setRelativeLoc(DoublePair l)<br>
 *These set the location, relative to the leader.*
 
-double getXLoc()
-double getYLoc()
-DoublePair getLoc()
+double getXLoc()<br>
+double getYLoc()<br>
+DoublePair getLoc()<br>
 *These return the absolute position of this object.*
 
-void setXLoc(double x)
-void setYLoc(double y)
-void setLoc(double x, double y)
-void setLoc(DoublePair p)
+void setXLoc(double x)<br>
+void setYLoc(double y)<br>
+void setLoc(double x, double y)<br>
+void setLoc(DoublePair p)<br>
 *These set the absolute position of this object. Its new relative position is calculated from this.*
 
 
@@ -252,194 +252,194 @@ boolean variableCollision
 ## class HitscanResult
 *Holds the results of an instantaneous scan of a ray. The ray might terminate early on a movingBoundingObject, geometry, or go its full distance.*
 
-MovingBoundingObject getMovingObject()
+MovingBoundingObject getMovingObject()<br>
 *If the ray struck a movingBoundingObject before anything else, this is that object. Else null.*
 
-DoublePair getPointOfImpact()
+DoublePair getPointOfImpact()<br>
 *If the ray struck something, this point where that happened. Else the sum of the origin and distance.*
 
-boolean isGeometryImpact()
+boolean isGeometryImpact()<br>
 *If the ray struck something, this point where that happened. Else the sum of the origin and distance.*
 
-boolean isMovingObjectImpact()
+boolean isMovingObjectImpact()<br>
 *True if the scan hit a movingBoundingObject, else false.*
 
-HitscanResult(DoublePair origin, DoublePair distance, PhysicsUnlockedEngine engine, int team)
+HitscanResult(DoublePair origin, DoublePair distance, PhysicsUnlockedEngine engine, int team)<br>
 *Calculate the hitscan. The team value here refers to the constants listed in PhysicsUnlockedEngine.*
 
 ## class Line
 *This class represents a mathematical line, in the form of y = mx + b. As this form cannot represent a vertical line (where the slope is infinite), Double.MAX_VALUE is used in that case.*
 
-Line(DoublePair origin, DoublePair slope)
+Line(DoublePair origin, DoublePair slope)<br>
 *Constructor. Sets the line from a point, and a slope (change in x, change in y).*
 
-static Line getFromPoints(DoublePair pointA, DoublePair pointB)
+static Line getFromPoints(DoublePair pointA, DoublePair pointB)<br>
 *Factory function. Creates a line from two points.*
 
-double getM()
-double getSlope()
+double getM()<br>
+double getSlope()<br>
 *Returns the slope of the line.*
 
-double getB()
-double getIntercept()
+double getB()<br>
+double getIntercept()<br>
 *Returns the intercept of the line.*
 
-DoublePair getPoint()
+DoublePair getPoint()<br>
 *Returns a point which is on the line.*
 
-boolean isVertical()
+boolean isVertical()<br>
 *True if the slope is infinite, else false.*
 
-boolean hasIntersection(Line that)
+boolean hasIntersection(Line that)<br>
 *Returns true if this line and that line intersect, else false. All lines intersect unless their slopes are identical (ie, they are parallel [zero intersections] or colinear [infinite intersections]).*
 
-DoublePair getIntersection(Line that)
+DoublePair getIntersection(Line that)<br>
 *Returns the point at which this line and that line intersect.*
 
-double[] getStandardForm()
+double[] getStandardForm()<br>
 *Returns an array representing the standard form rather than the slope-intercept form ({m, -1.0, -b}).*
 
-boolean pointIsBelow(DoublePair thatPoint)
+boolean pointIsBelow(DoublePair thatPoint)<br>
 *Returns true if the passed point is below the line.*
 
-boolean pointIsAbove(DoublePair thatPoint)
+boolean pointIsAbove(DoublePair thatPoint)<br>
 *Returns true if the passed point is below the line.*
 
-double getYAtX(double thatX)
+double getYAtX(double thatX)<br>
 *Returns the y value of the line at the given x value.*
 
 
 ## abstract class MovingBoundingObject extends BoundingObject implements MovingCollidable
 *An abstract class for moving bounding objects. Speeds are in tiles per second. Acceleration and deceleration are in tiles per second per second.*
 
-MovingBoundingObject()
+MovingBoundingObject()<br>
 *Simple constructor.*
 
-double getXSpeed()
-double getYSpeed()
-DoublePair getSpeed()
-double getXAcceleration()
-double getYAcceleration()
-DoublePair getAcceleration()
+double getXSpeed()<br>
+double getYSpeed()<br>
+DoublePair getSpeed()<br>
+double getXAcceleration()<br>
+double getYAcceleration()<br>
+DoublePair getAcceleration()<br>
 *Basic getters.*
 
-double getXDeceleration()
-double getYDeceleration()
-DoublePair getDeceleration()
+double getXDeceleration()<br>
+double getYDeceleration()<br>
+DoublePair getDeceleration()<br>
 *Basic getters. Decelration is only applied if the object has 0.0 for acceleration on that axis. Deceleration is an unsigned value, and moves the speed towards 0.0.*
 
-double getXMaxSpeed()
-double getYMaxSpeed()
-DoublePair getMaxSpeed()
+double getXMaxSpeed()<br>
+double getYMaxSpeed()<br>
+DoublePair getMaxSpeed()<br>
 *Basic getters. Max speed is a cap on acceleration; using setSpeed() ignores maxes.*
 
-boolean isAffectedByGravity()
+boolean isAffectedByGravity()<br>
 *True if the object is affected by gravity, else false.*
 
-boolean isPushedByGeometry()
+boolean isPushedByGeometry()<br>
 *True if the object is prevented from entering solid geometry.*
 
-abstract int getDrawOriginX(int tileSizePixels)
-abstract int getDrawOriginY(int tileSizePixels)
+abstract int getDrawOriginX(int tileSizePixels)<br>
+abstract int getDrawOriginY(int tileSizePixels)<br>
 *Returns the location to start drawing the shape, in pixels.*
 
-synchronized void setXSpeed(double x)
-synchronized void setYSpeed(double y)
-synchronized void setSpeed(double x, double y)
-synchronized void setSpeed(DoublePair dp)
-synchronized void setXAcceleration(double x)
-synchronized void setYAcceleration(double y)
-synchronized void setAcceleration(double x, double y)
+synchronized void setXSpeed(double x)<br>
+synchronized void setYSpeed(double y)<br>
+synchronized void setSpeed(double x, double y)<br>
+synchronized void setSpeed(DoublePair dp)<br>
+synchronized void setXAcceleration(double x)<br>
+synchronized void setYAcceleration(double y)<br>
+synchronized void setAcceleration(double x, double y)<br>
 *Basic setters.*
 
-synchronized void setXDeceleration(double x)
-synchronized void setYDeceleration(double y)
-synchronized void setDeceleration(double x, double y)
+synchronized void setXDeceleration(double x)<br>
+synchronized void setYDeceleration(double y)<br>
+synchronized void setDeceleration(double x, double y)<br>
 *Basic setters. Decelration is only applied if the object has 0.0 for acceleration on that axis. Deceleration is an unsigned value, and moves the speed towards 0.0.*
 
-synchronized void setXMaxSpeed(double x)
-synchronized void setYMaxSpeed(double y)
-synchronized void setMaxSpeed(double x, double y)
+synchronized void setXMaxSpeed(double x)<br>
+synchronized void setYMaxSpeed(double y)<br>
+synchronized void setMaxSpeed(double x, double y)<br>
 *Basic setters. Max speed is a cap on acceleration; using setSpeed() ignores maxes.*
 
-synchronized void setAffectedByGravity(boolean a)
+synchronized void setAffectedByGravity(boolean a)<br>
 *True if the object is affected by gravity, else false.*
 
-synchronized void setPushedByGeometry(boolean c)
+synchronized void setPushedByGeometry(boolean c)<br>
 *True if the object is prevented from entering solid geometry.*
 
-synchronized void applyXImpulse(double x)
+synchronized void applyXImpulse(double x)<br>
 *Adjust the x speed.*
 
-synchronized void applyYImpulse(double y)
+synchronized void applyYImpulse(double y)<br>
 *Adjust the y speed.*
 
-synchronized void applyImpulse(double x, double y)
+synchronized void applyImpulse(double x, double y)<br>
 *Adjust the x and y speeds.*
 
-synchronized void applySpeeds(double secondsElapsed)
+synchronized void applySpeeds(double secondsElapsed)<br>
 *Apply the speeds to the position. Let the engine do this.*
 
-synchronized void applyGravityImpulse(double speed, double terminalVelocity)
+synchronized void applyGravityImpulse(double speed, double terminalVelocity)<br>
 *Gravity is like other y-impulses, except limited by terminalVelocity.*
 
-synchronized int[] getPotentialCollisionOrigin(double seconds)
+synchronized int[] getPotentialCollisionOrigin(double seconds)<br>
 *Returns the upper-left tile location (x, y) to begin seraching for geometric collisions.*
 
-synchronized int[] getPotentialCollisionEnd(double seconds)
+synchronized int[] getPotentialCollisionEnd(double seconds)<br>
 *Returns the lower-right tile location (x, y) to end seraching for geometric collisions.*
 
-synchronized void adjustForCollision(SweptAABB collision)
+synchronized void adjustForCollision(SweptAABB collision)<br>
 *Adjust speeds to stop short of collision.*
 
-synchronized void applyAccelerations(double secondsElapsed)
+synchronized void applyAccelerations(double secondsElapsed)<br>
 *Apply the accelerations to speed. Let the engine do this.*
 
-void movingCollisionOccured(MovingCollision mc)
+void movingCollisionOccured(MovingCollision mc)<br>
 *Notifies listeners that a collision has occured.*
 
-void addCollisionListener(MovingCollisionListener listener)
+void addCollisionListener(MovingCollisionListener listener)<br>
 *Add a listener to be notified when a collision occurs.*
 
-void removeCollisionListener(MovingCollisionListener listener)
+void removeCollisionListener(MovingCollisionListener listener)<br>
 *Remove a listener.*
 
 ## interface MovingCollidable
 *An interface for moving objects that can collide. The implementation for this is not explicitly threaded; it occurs on the engine's thread.*
 
-void movingCollisionOccured(MovingCollision mc)
+void movingCollisionOccured(MovingCollision mc)<br>
 *Notifies listeners that a collision has occured.*
 
-void addCollisionListener(MovingCollisionListener listener)
+void addCollisionListener(MovingCollisionListener listener)<br>
 *Add a listener to be notified when a collision occurs.*
 
-void removeCollisionListener(MovingCollisionListener listener)
+void removeCollisionListener(MovingCollisionListener listener)<br>
 *Remove a listener.*
 
 
 ## class MovingCollision
 *A class for bundling up information about a non-push collision.*
 
-MovingCollision(MovingBoundingObject s, MovingBoundingObject mbo)
+MovingCollision(MovingBoundingObject s, MovingBoundingObject mbo)<br>
 *Constructor. For MBO on geometry collisions, the second argument is null.*
 
-MovingBoundingObject getSource()
+MovingBoundingObject getSource()<br>
 *Returns the first movingBoundingObject in the collision.*
 
-MovingBoundingObject getOtherObject()
+MovingBoundingObject getOtherObject()<br>
 *Returns the second movingBoundingObject in the collision, or null if there is no such object.*
 
-boolean isGeometryCollision()
+boolean isGeometryCollision()<br>
 *True if this is a collision with geometry, else false. Logically equivalent to getOtherObject() == null.*
 
-boolean isNonGeometryCollision()
+boolean isNonGeometryCollision()<br>
 *True if this is a collision with a movingBoundingObject, else false. Logically equivalent to getOtherObject() != null.*
 
 
 ## interface MovingCollisionListener
 *An interface for object to be notified when non-push collisions occur.*
 
-void movingCollisionOccured(MovingCollision mc)
+void movingCollisionOccured(MovingCollision mc)<br>
 *Function to be called when a collision happens.*
 
 
@@ -453,80 +453,80 @@ static final int ENEMY_PROJECTILE<br>
 static final int ENVIRONMENT<br>
 *Constants for culling potential collisions and hitscan results.*
 
-PhysicsUnlockedEngine()
+PhysicsUnlockedEngine()<br>
 *Basic constructor. runFlag is initially set to false, you will need to set it to true to being the engine.*
 
-double getGravity()
-double getTerminalVelocity()
-Vector&lt;MovingBoundingObject> getObjList()
-GeometryType[][] getGeometry()
-boolean getRunFlag()
+double getGravity()<br>
+double getTerminalVelocity()<br>
+Vector&lt;MovingBoundingObject> getObjList()<br>
+GeometryType[][] getGeometry()<br>
+boolean getRunFlag()<br>
 *Basic getters.*
 
-int getCPS()
+int getCPS()<br>
 *The engine keeps tracks of how many cycles per second it executes. This is the getter for that number, which is updated once per second.*
 
-void setGravity(double g)
-void setTerminalVelocity(double t)
-void setObjList(Vector&lt;MovingBoundingObject> newList)
-void setGeometry(GeometryType[][] g)
+void setGravity(double g)<br>
+void setTerminalVelocity(double t)<br>
+void setObjList(Vector&lt;MovingBoundingObject> newList)<br>
+void setGeometry(GeometryType[][] g)<br>
 *Basic setters.*
 
-void setRunFlag(boolean rf)
+void setRunFlag(boolean rf)<br>
 *Setter for the run flag. If this is false, the engine will idle until it is turned back to true.*
 
-void terminate()
+void terminate()<br>
 *This allows the engine thread to terminate.*
 
-void add(MovingBoundingObject obj)
-void add(MovingBoundingObject obj, int list)
+void add(MovingBoundingObject obj)<br>
+void add(MovingBoundingObject obj, int list)<br>
 *Adds a movingBoundingObject to have physics done to it. If no list is specified (see the constants for this class), ENVIRONMENT is the default.*
 
-void remove(MovingBoundingObject obj)
+void remove(MovingBoundingObject obj)<br>
 *Removes a movingBoundingObject.*
 
-boolean touchingFloor(MovingBoundingObject obj)
+boolean touchingFloor(MovingBoundingObject obj)<br>
 *Returns true if the object is touching geometry in the Y+ direction.*
 
-boolean touchingCeiling(MovingBoundingObject obj)
+boolean touchingCeiling(MovingBoundingObject obj)<br>
 *Returns true if the object is touching geometry in the Y- direction.*
 
-boolean touchingLeftWall(MovingBoundingObject obj)
+boolean touchingLeftWall(MovingBoundingObject obj)<br>
 *Returns true if the object is touching geometry in the X- direction.*
 
-boolean touchingRightWall(MovingBoundingObject obj)
+boolean touchingRightWall(MovingBoundingObject obj)<br>
 *Returns true if the object is touching geometry in the X+ direction.*
 
-DoublePair getOrthoGeometryCollisionNormals(MovingBoundingObject obj)
+DoublePair getOrthoGeometryCollisionNormals(MovingBoundingObject obj)<br>
 *Returns a pair of normals, checking one tile up, down, left, and right. Not intended for sizes greater than 1.0.*
 
-boolean isCollidingWithGeometry(MovingBoundingObject obj)
+boolean isCollidingWithGeometry(MovingBoundingObject obj)<br>
 *Returns true if the object is overlapping geometry.*
 
-HitscanResult calculateHitscan(DoublePair origin, DoublePair distance)
-HitscanResult calculateHitscan(DoublePair origin, DoublePair distance, int scanType)
+HitscanResult calculateHitscan(DoublePair origin, DoublePair distance)<br>
+HitscanResult calculateHitscan(DoublePair origin, DoublePair distance, int scanType)<br>
 *Does a hitscan. If no scanType is specified (see constants for this class), ENVIRONMENT is defaulted.*
 
-MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance)
-MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance, int scanType)
+MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance)<br>
+MovingBoundingObject getHitscanImpact(DoublePair origin, DoublePair distance, int scanType)<br>
 *Does a hitscan, returning the movingBoundingObject hit or null if no such hit occured. If no scanType is specified (see constants for this class), ENVIRONMENT is defaulted.*
 
-DoublePair getHitscanImpactGeometry(DoublePair origin, DoublePair distance)
+DoublePair getHitscanImpactGeometry(DoublePair origin, DoublePair distance)<br>
 *Does a hitscan and returns a point within the tile hit. This position is relative to the origin, not an absolute position.*
 
-boolean isInBounds(int x, int y)
+boolean isInBounds(int x, int y)<br>
 *Returns true if the x, y index passed in is within the geometry array, else false.*
 
-static double getDistanceMetric(DoublePair boxLoc, DoublePair loc)
+static double getDistanceMetric(DoublePair boxLoc, DoublePair loc)<br>
 *Returns a^2 + b^2 for quickly comparing distances.*
 
-GeometryType getGeometryType(int x, int y)
+GeometryType getGeometryType(int x, int y)<br>
 *Returns the GeometryType of the indexed tile, or GeometryType.FULL if the index is out of bounds.*
 
-boolean pointCollidesWithGeometry(DoublePair point)
+boolean pointCollidesWithGeometry(DoublePair point)<br>
 *Returns true if the point collides with the GeometryType of the tile in which it lies, else false.*
 
-boolean pointCollidesWithGeometry(DoublePair point, int x, int y)
+boolean pointCollidesWithGeometry(DoublePair point, int x, int y)<br>
 *Returns true if the point collides with the GeometryType of the indexed tile, else false.*
 
 
@@ -539,41 +539,41 @@ The values normalX and normalY are, well, normals. If no collision occured, they
 
 Time represents the portion of the distance the object would travel that occurs before a collision. So if the objects are already in collision, this would be 0.0. If no collision occurs, this will be 1.0. If a collision would occur at three-quarters of the distance the object is trying to move, this number would be .75 regardless of what the attempted distance would be.*
 
-SweptAABB()
+SweptAABB()<br>
 *Empty constructor. Since all the work is done upon instantiation, there's not much reason to call this.*
 
-SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize)
-SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
+SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize)<br>
+SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)<br>
 *A scan between two boxes. If no GeometryType is passed in, GeometryType.FULL is the default. The default is the appropriate value for non-geometric collisions.*
 
-SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj)
+SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj)<br>
 *A scan between a single point, and a movingBoundingObject. This is mostly used for hitscans on movingBoundingObjects.*
 
-SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY)
-SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY, GeometryType type)
+SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY)<br>
+SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY, GeometryType type)<br>
 *A scan a movingBoundingObject and geometry. If no GeometryType is passed in, GeometryType.FULL is the default.*
 
-SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY)
-SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY, GeometryType type)
+SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY)<br>
+SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY, GeometryType type)<br>
 *A scan hitscans and geometry. If no GeometryType is passed in, GeometryType.FULL is the default.*
 
-int getNormalX()
+int getNormalX()<br>
 *-1 if colliding with the left side of a box, 1 if colliding with the right side, else 0.*
 
-int getNormalY()
+int getNormalY()<br>
 *-1 if colliding with the top side of a box, 1 if colliding with the bottom side, else 0.*
 
-double getTime()
+double getTime()<br>
 *Returns the portion of the movement or distance at which the collision occurs, scaled to [0.0, 1.0]. A time of 0.0 means the objects are already in collision. A time of 1.0 means no collision occurs. A time of .75 means that a collision occurs at three-quarters of the full distance.*
 
-boolean isCollision()
+boolean isCollision()<br>
 *True if a collision occurs. Logically equivalent to getTime() < 1.0.*
 
-DoublePair getCollisionLoc()
+DoublePair getCollisionLoc()<br>
 *Returns the x, y coordinates at which the collision occurs. In the case where the moving object is a box, this point is on a line drawn from the center of the box in the direction of movement.*
 
-boolean shouldIgnore(DoublePair point, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
+boolean shouldIgnore(DoublePair point, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)<br>
 *Returns true if the GeometryType should be ignored; for example, a that prevents right-ward movement should be ignored by a left-moving object.*
 
-String serialize()
+String serialize()<br>
 *String representation of this object.*
