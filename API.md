@@ -266,3 +266,45 @@ boolean isMovingObjectImpact()
 
 HitscanResult(DoublePair origin, DoublePair distance, PhysicsUnlockedEngine engine, int team)
 *Calculate the hitscan. The team value here refers to the constants listed in PhysicsUnlockedEngine.*
+
+## class Line
+*This class represents a mathematical line, in the form of y = mx + b. As this form cannot represent a vertical line (where the slope is infinite), Double.MAX_VALUE is used in that case.*
+
+
+Line(DoublePair origin, DoublePair slope)
+*Constructor. Sets the line from a point, and a slope (change in x, change in y).*
+
+static Line getFromPoints(DoublePair pointA, DoublePair pointB)
+*Factory function. Creates a line from two points.*
+
+double getM()
+double getSlope()
+*Returns the slope of the line.*
+
+double getB()
+double getIntercept()
+*Returns the intercept of the line.*
+
+DoublePair getPoint()
+*Returns a point which is on the line.*
+
+boolean isVertical()
+*True if the slope is infinite, else false.*
+
+boolean hasIntersection(Line that)
+*Returns true if this line and that line intersect, else false. All lines intersect unless their slopes are identical (ie, they are parallel [zero intersections] or colinear [infinite intersections]).*
+
+DoublePair getIntersection(Line that)
+*Returns the point at which this line and that line intersect.*
+
+double[] getStandardForm()
+*Returns an array representing the standard form rather than the slope-intercept form ({m, -1.0, -b}).*
+
+boolean pointIsBelow(DoublePair thatPoint)
+*Returns true if the passed point is below the line.*
+
+boolean pointIsAbove(DoublePair thatPoint)
+*Returns true if the passed point is below the line.*
+
+double getYAtX(double thatX)
+*Returns the y value of the line at the given x value.*
