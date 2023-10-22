@@ -528,3 +528,59 @@ boolean pointCollidesWithGeometry(DoublePair point)
 
 boolean pointCollidesWithGeometry(DoublePair point, int x, int y)
 *Returns true if the point collides with the GeometryType of the indexed tile, else false.*
+
+
+##class SweptAABB
+*This is an implementation of swept axis-aligned bounding boxes, also called projected rectangle collision.
+
+All calculations are done when the constructor is called. The object is essentially the return value of a function. 
+
+The values normalX and normalY are, well, normals. If no collision occured, they'll both be zero, otherwise they represent "pushback" along their respective axis.
+
+Time represents the portion of the distance the object would travel that occurs before a collision. So if the objects are already in collision, this would be 0.0. If no collision occurs, this will be 1.0. If a collision would occur at three-quarters of the distance the object is trying to move, this number would be .75 regardless of what the attempted distance would be.*
+
+SweptAABB()
+*Empty constructor. Since all the work is done upon instantiation, there's not much reason to call this.*
+
+SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize)
+SweptAABB(DoublePair point, DoublePair distance, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
+*A scan between two boxes. If no GeometryType is passed in, GeometryType.FULL is the default. The default is the appropriate value for non-geometric collisions.*
+
+SweptAABB(DoublePair point, DoublePair distance, MovingBoundingObject obj)
+*A scan between a single point, and a movingBoundingObject. This is mostly used for hitscans on movingBoundingObjects.*
+
+SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY)
+SweptAABB(MovingBoundingObject obj, double secondsElapsed, int geometryX, int geometryY, GeometryType type)
+*A scan a movingBoundingObject and geometry. If no GeometryType is passed in, GeometryType.FULL is the default.*
+
+// for hitscan
+SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY)
+SweptAABB(DoublePair origin, DoublePair distance, int geometryX, int geometryY, GeometryType type)
+*A scan hitscans and geometry. If no GeometryType is passed in, GeometryType.FULL is the default.*
+
+int getNormalX()
+*-1 if colliding with the left side of a box, 1 if colliding with the right side, else 0.*
+
+int getNormalY()
+*-1 if colliding with the top side of a box, 1 if colliding with the bottom side, else 0.*
+
+double getTime()
+*Returns the portion of the movement or distance at which the collision occurs, scaled to [0.0, 1.0]. A time of 0.0 means the objects are already in collision. A time of 1.0 means no collision occurs. A time of .75 means that a collision occurs at three-quarters of the full distance.*
+
+boolean isCollision()
+*True if a collision occurs. Logically equivalent to getTime() < 1.0.*
+
+DoublePair getCollisionLoc()
+*Returns the x, y coordinates at which the collision occurs. In the case where the moving object is a box, this point is on a line drawn from the center of the box in the direction of movement.*
+
+
+
+
+
+
+
+
+boolean shouldIgnore(DoublePair point, DoublePair boxOrigin, DoublePair boxSize, GeometryType type)
+
+
+String serialize()
