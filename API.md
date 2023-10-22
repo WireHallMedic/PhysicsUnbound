@@ -458,7 +458,7 @@ PhysicsUnlockedEngine()
 
 double getGravity()
 double getTerminalVelocity()
-Vector&ltMovingBoundingObject&rt getObjList()
+Vector&lt;MovingBoundingObject&rt; getObjList()
 GeometryType[][] getGeometry()
 boolean getRunFlag()
 *Basic getters.*
@@ -468,7 +468,7 @@ int getCPS()
 
 void setGravity(double g)
 void setTerminalVelocity(double t)
-void setObjList(Vector&ltMovingBoundingObject&rt newList)
+void setObjList(Vector&lt;MovingBoundingObject&rt; newList)
 void setGeometry(GeometryType[][] g)
 *Basic setters.*
 
