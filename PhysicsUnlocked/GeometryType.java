@@ -1,5 +1,5 @@
 /*
-
+Enum for tile types.
 */
 
 package PhysicsUnlocked;
