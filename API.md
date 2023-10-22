@@ -187,3 +187,39 @@ static DoublePair getFromAngle(double theta)
 
 static double simplifyAngle(double angle)
 *Returns a value which is the angle bound in the range of 0.0, 2 * PI. For example, -1 radian would come back as (2 * PI) - radian, and a full circle + 1 radian would come back as 1 radian.*
+
+
+##class FollowingBB extends BoundingBox
+*This is a bounding box that follows some other MovingBoundingObject. The FollowingBB's loc variable is relative to the leader's loc variable. Setting the loc will change its relative position, and getting the loc will return the sum of this.loc and leader.loc.*
+
+FollowingBB(double width, double height, MovingBoundingObject leader)
+*Constructor. In addition to the height and width for a standard BoundingBox, another MovingBoundingObject is passed in as the leader.*
+
+MovingBoundingObject getLeader()
+*Standard getter.*
+
+double getRelativeXLoc()
+double getRelativeYLoc()
+DoublePair getRelativeLoc()
+*This returns the object's location relative to the leader.*
+
+void setLeader(MovingBoundingObject l)
+*Standard setter.*
+
+void setRelativeXLoc(double x)
+void setRelativeYLoc(double y)
+void setRelativeLoc(double x, double y)
+void setRelativeLoc(DoublePair l)
+*These set the location, relative to the leader.*
+
+double getXLoc()
+double getYLoc()
+DoublePair getLoc()
+*These return the absolute position of this object.*
+
+void setXLoc(double x)
+void setYLoc(double y)
+void setLoc(double x, double y)
+void setLoc(DoublePair p)
+*These set the absolute position of this object. Its new relative position is calculated from this.*
+
