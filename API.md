@@ -1,5 +1,7 @@
 #API
 
+#High-Level Concepts
+
 ## General Conventions
 This library has a couple of constant conventions. Time is measured in seconds. Distance is measured in tiles. Therefore speeds are in tiles per second, and accelerations in tiles per second per second.
 
@@ -8,9 +10,9 @@ For the most part, this library doesn't know about display sizes and doesn't wan
 All objects with some sort of size consider the center of their shape to be their origin.
 
 ## PhysicsUnlockedEngine
-This is the workhorse class. It does its calculations as frequently as it can, up to 1000 Hz. It mainly needs two things; a 2D boolean array for geometry, where true means solid and false means non-solid; and MovingBoundingObject which are the stuff that moves around and collides.
+This is the workhorse class. It does its calculations as frequently as it can, up to 1000 Hz. It mainly needs two things; a 2D array for geometry, and MovingBoundingObjects which are the stuff that moves around and collides.
 
-The engine can be paused with setRunFlag(), or terminated with terminate().
+The engine can be paused with setRunFlag(), or terminated with terminate(). terminate() is mainly used for testing, as the engine's thread doesn't otherwise terminate.
 
 It also keeps track of variables global to all the moving stuff; gravity and terminal velocity. If you're doing a side-on game you'll want to set these, if you're doing a top-down game you won't.
 
@@ -31,7 +33,7 @@ PushedByGeometry. This is a boolean that controls if an object stops when they c
 
 
 ## BoundingBox
-This is the main object for stuff on the map. It extends MovingBoundingObject. BoundingBoxes have height and width, as well as precalculating halfHeight and halfWidth as they get used a lot. Their origin is in the center of the box. Since these are the actual object classes that you'll be instantiating, they have getDrawOriginX() and getDrawOriginY(), which accept tile size in pixels and return the pixel location to actually draw the box (Java draws from the top right corner).
+This is the main object for stuff on the map. It extends MovingBoundingObject. BoundingBoxes have height and width, as well as precalculating halfHeight and halfWidth as they get used a lot. Their origin is in the center of the box. Since these are the actual classes that you'll be instantiating, they have getDrawOriginX() and getDrawOriginY(), which accept tile size in pixels and return the pixel location to actually draw the box (Java draws from the top right corner).
 
 They also have isColliding() and pointIsIn() to test collision with MovingBoundingObjects and points, respectively.
 
@@ -60,3 +62,14 @@ MovingBoundingObject movingObject: The MovingBoundingObject that got hit, or nul
 DoublePair pointOfImpact: The x, y coordinates (in tiles) of where the ray terminated.
 boolean geometryImpact: True if the ray terminated early by hitting geometry, else false.
 boolean movingObjectImpact: True if the ray terminated early by hitting a MovingBoundingObject, else false.
+
+## GeometryType
+This enumerator holds the tile types for geometry. They are as follows:
+EMPTY. This type does not block movement or collide.
+FULL. This type blocks movement and collides.
+BLOCKS_RIGHT. This type blocks movement from the left, and triggers collisions if the object is moving to the right.
+BLOCKS_LEFT. This type blocks movement from the right, and triggers collisions if the object is moving to the left.
+BLOCKS_UP. This type blocks movement from the bottom, and triggers collisions if the object is moving up.
+BLOCKS_DOWN. This type blocks movement from the top, and triggers collisions if the object is moving down.
+
+# Implementation

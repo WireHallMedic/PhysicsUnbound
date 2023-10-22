@@ -6,4 +6,4 @@ The objective of this project is to provide a reasonably robust and clean physic
 
 PhysicsUnbound is heavily inspired with my previous similar project, Physics2D. In the end, the interface was a bit cumbersome, and I wanted behavior to be as smooth as possible, meaning it needed to handle frames of arbitrary length.
 
-Initially, I was going to support both axis-aligned bounding boxes and bounding circles. While I may add circles back in at some point, at this time there is little incentive to do so.
+Initially, I was going to support both axis-aligned bounding boxes and bounding circles. While I may add circles back in at some point, at this time there is little incentive to do so. Similarly, I spent some time implementing slopes, but all the stupid corner cases made it more work than it was worth.
