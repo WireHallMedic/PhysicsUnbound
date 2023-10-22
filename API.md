@@ -104,6 +104,7 @@ boolean pointIsIn(double x, double y)<br>
 boolean pointIsIn(DoublePair point)<br>
 *Returns true if the passed point lies inside this box, else false.*
 
+
 ## abstract class BoundingObject
 
 BoundingObject()<br>
@@ -132,17 +133,17 @@ abstract double getHeight()<br>
 ## class DoublePair
 *A convient way to bundle related pairs of doubles. In most places this represents Cartesian coordinates at double precision, but can also be used to hold mathematical vectors (angle and magnitude pairs).*
 
-final static double FULL_CIRCLE
-final static double THREE_QUARTER_CIRCLE
-final static double HALF_CIRCLE
-final static double QUARTER_CIRCLE
-final static double EIGHTH_CIRCLE
+final static double FULL_CIRCLE<br>
+final static double THREE_QUARTER_CIRCLE<br>
+final static double HALF_CIRCLE<br>
+final static double QUARTER_CIRCLE<br>
+final static double EIGHTH_CIRCLE<br>
 *Constants for common values. Angles are in radians, rotation is counter-clockwise.*
 
-double x
+double x<br>
 *The x component of this object.*
 
-double y
+double y<br>
 *The y component of this object.*
 
 DoublePair(double xVal, double yVal)<br>
@@ -227,25 +228,25 @@ void setLoc(DoublePair p)<br>
 ## enum GeometryType
 *An enumerator used for different types of geometry tiles.*
 
-EMPTY
+EMPTY<br>
 *A fully passable tile.*
 
-FULL
+FULL<br>
 *A fully impassable tile.*
 
-BLOCKS_RIGHT
+BLOCKS_RIGHT<br>
 *A tile that is impassable if the moving object is moving to the right, else passable.*
 
-BLOCKS_LEFT
+BLOCKS_LEFT<br>
 *A tile that is impassable if the moving object is moving to the left, else passable.*
 
-BLOCKS_UP
+BLOCKS_UP<br>
 *A tile that is impassable if the moving object is moving up, else passable.*
 
-BLOCKS_DOWN
+BLOCKS_DOWN<br>
 *A tile that is impassable if the moving object is moving down, else passable.*
 
-boolean variableCollision
+boolean variableCollision<br>
 *False for EMPTY and FULL, else true.*
 
 
@@ -531,13 +532,13 @@ boolean pointCollidesWithGeometry(DoublePair point, int x, int y)<br>
 
 
 ## class SweptAABB
-*This is an implementation of swept axis-aligned bounding boxes, also called projected rectangle collision.
+*This is an implementation of swept axis-aligned bounding boxes, also called projected rectangle collision.*
 
-All calculations are done when the constructor is called. The object is essentially the return value of a function. 
+*All calculations are done when the constructor is called. The object is essentially the return value of a function.*
 
-The values normalX and normalY are, well, normals. If no collision occured, they'll both be zero, otherwise they represent "pushback" along their respective axis.
+*The values normalX and normalY are, well, normals. If no collision occured, they'll both be zero, otherwise they represent "pushback" along their respective axis.*
 
-Time represents the portion of the distance the object would travel that occurs before a collision. So if the objects are already in collision, this would be 0.0. If no collision occurs, this will be 1.0. If a collision would occur at three-quarters of the distance the object is trying to move, this number would be .75 regardless of what the attempted distance would be.*
+*Time represents the portion of the distance the object would travel that occurs before a collision. So if the objects are already in collision, this would be 0.0. If no collision occurs, this will be 1.0. If a collision would occur at three-quarters of the distance the object is trying to move, this number would be .75 regardless of what the attempted distance would be.*
 
 SweptAABB()<br>
 *Empty constructor. Since all the work is done upon instantiation, there's not much reason to call this.*
