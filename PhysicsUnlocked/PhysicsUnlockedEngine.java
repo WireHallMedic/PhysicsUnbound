@@ -35,6 +35,7 @@ public class PhysicsUnlockedEngine implements Runnable
    private Thread thread;
    private int cps;
    private GeometryType[][] geometry;
+   private Vector<MovingBoundingObject> removalList;
 
 
 	public double getGravity(){return gravity;}
@@ -61,6 +62,7 @@ public class PhysicsUnlockedEngine implements Runnable
       enemyList = new Vector<MovingBoundingObject>();
       enemyProjectileList = new Vector<MovingBoundingObject>();
       environmentList = new Vector<MovingBoundingObject>();
+      removalList = new Vector<MovingBoundingObject>();
       runFlag = false;
       geometry = new GeometryType[1][1];
       geometry[0][0] = GeometryType.EMPTY;
@@ -83,15 +85,27 @@ public class PhysicsUnlockedEngine implements Runnable
       }
    }
    
-   // remove a moving object
+   // note a moving object as ready for removal
    public void remove(MovingBoundingObject obj)
    {
-      objList.remove(obj);
-      playerList.remove(obj);
-      playerProjectileList.remove(obj);
-      enemyList.remove(obj);
-      enemyProjectileList.remove(obj);
-      environmentList.remove(obj);
+      removalList.add(obj);
+   }
+   
+   private void clearRemovalList()
+   {
+      synchronized(removalList)
+      {
+         for(MovingBoundingObject obj : removalList)
+         {
+            objList.remove(obj);
+            playerList.remove(obj);
+            playerProjectileList.remove(obj);
+            enemyList.remove(obj);
+            enemyProjectileList.remove(obj);
+            environmentList.remove(obj);
+         }
+         removalList.clear();
+      }
    }
    
    // called by thread.start()
@@ -122,6 +136,7 @@ public class PhysicsUnlockedEngine implements Runnable
                   lastSecond = curTime;
                }
             }
+            clearRemovalList();
          }
          // notate for next loop
          lastTime = curTime;
