@@ -149,10 +149,10 @@ public class PhysicsUnlockedEngine implements Runnable
    public void doPhysics(int millisElapsed)
    {
       double secondsElapsed = (double)millisElapsed / 1000.0;
-      for(MovingBoundingObject obj : objList)
+      // aquire the lock so that nothing is adjusted mid-processing
+      synchronized(objList)
       {
-         // aquire the lock so that nothing is adjusted mid-processing
-         synchronized(obj)
+         for(MovingBoundingObject obj : objList)
          {
             // apply any accelerations the object has. This may include deceleration (ie friction).
             obj.applyAccelerations(secondsElapsed);
@@ -201,78 +201,78 @@ public class PhysicsUnlockedEngine implements Runnable
    // perform non-push collision checks
    public void doCollisionChecks()
    {
-      // player collisions
-      for(MovingBoundingObject obj : playerList)
+      // aquire the lock so that nothing is adjusted mid-processing
+      synchronized(playerList)
       {
-         // aquire the lock so that nothing is adjusted mid-processing
-         synchronized(obj)
+         // player collisions
+         for(MovingBoundingObject obj : playerList)
          {
             // things not pushed by geometery can collide with it
             if(!obj.isPushedByGeometry() && isCollidingWithGeometry(obj))
                obj.movingCollisionOccured(new MovingCollision(obj, null));
             // test against enemies
-            for(MovingBoundingObject enemy : enemyList)
+            synchronized(enemyList)
             {
-               synchronized(enemy)
+               for(MovingBoundingObject enemy : enemyList)
                {
                   if(obj.isColliding(enemy))
                   {
                      obj.movingCollisionOccured(new MovingCollision(obj, enemy));
                      enemy.movingCollisionOccured(new MovingCollision(enemy, obj));
                   }
-               } // release enemy lock
+               }
             }
-            // test against enemy projectiles
-            for(MovingBoundingObject enemyProj : enemyProjectileList)
+            synchronized(enemyProjectileList)
             {
-               synchronized(enemyProj)
+               // test against enemy projectiles
+               for(MovingBoundingObject enemyProj : enemyProjectileList)
                {
                   if(obj.isColliding(enemyProj))
                   {
                      obj.movingCollisionOccured(new MovingCollision(obj, enemyProj));
                      enemyProj.movingCollisionOccured(new MovingCollision(enemyProj, obj));
                   }
-               } // release enemy projectile lock
+               } 
             }
-         } // release player lock
+         } 
       } // end player collisions
       
       // test enemies. We have already caught any player-enemy collisions.
-      for(MovingBoundingObject obj : enemyList)
+      // aquire the lock so that nothing is adjusted mid-processing
+      synchronized(enemyList)
       {
-         // aquire the lock so that nothing is adjusted mid-processing
-         synchronized(obj)
+         for(MovingBoundingObject obj : enemyList)
          {
             // things not pushed by geometery can collide with it
             if(!obj.isPushedByGeometry() && isCollidingWithGeometry(obj))
                obj.movingCollisionOccured(new MovingCollision(obj, null));
             // test against player projectiles
-            for(MovingBoundingObject playerProj : playerProjectileList)
+            synchronized(playerProjectileList)
             {
-               synchronized(playerProj)
+               for(MovingBoundingObject playerProj : playerProjectileList)
                {
                   if(obj.isColliding(playerProj))
                   {
                      obj.movingCollisionOccured(new MovingCollision(obj, playerProj));
                      playerProj.movingCollisionOccured(new MovingCollision(playerProj, obj));
                   }
-               } // release player projectile lock
-            }
-         } // release enemy lock
+               } 
+            } 
+         } 
       } // end enemy collisions
       
       // since we've caught all player and enemy collisions, projectiles just need to test for geometry
-      for(MovingBoundingObject obj : playerProjectileList)
+      synchronized(playerProjectileList)
       {
-         synchronized(obj)
+         for(MovingBoundingObject obj : playerProjectileList)
          {
             if(!obj.isPushedByGeometry() && isCollidingWithGeometry(obj))
                obj.movingCollisionOccured(new MovingCollision(obj, null));
          }
       }
-      for(MovingBoundingObject obj : enemyProjectileList)
+      synchronized(enemyProjectileList)
       {
-         synchronized(obj)
+         for(MovingBoundingObject obj : enemyProjectileList)
          {
             if(!obj.isPushedByGeometry() && isCollidingWithGeometry(obj))
                obj.movingCollisionOccured(new MovingCollision(obj, null));
@@ -280,23 +280,23 @@ public class PhysicsUnlockedEngine implements Runnable
       }
       
       // since environmental object collide with everything, we'll just do all that here
-      for(int i = 0; i < environmentList.size(); i++)
+      // aquire the lock so that nothing is adjusted mid-processing
+      synchronized(environmentList)
       {
-         MovingBoundingObject obj = environmentList.elementAt(i);
-         // aquire the lock so that nothing is adjusted mid-processing
-         synchronized(obj)
+         for(int i = 0; i < environmentList.size(); i++)
          {
+            MovingBoundingObject obj = environmentList.elementAt(i);
             // things not pushed by geometery can collide with it
             if(!obj.isPushedByGeometry() && isCollidingWithGeometry(obj))
                obj.movingCollisionOccured(new MovingCollision(obj, null));
             // test against everything
-            for(MovingBoundingObject otherObj : objList)
+            // aquire lock for other object
+            synchronized(objList)
             {
-               // well, everything except itself
-               if(obj != otherObj)
+               for(MovingBoundingObject otherObj : objList)
                {
-                  // aquire lock for other object
-                  synchronized(otherObj)
+                  // well, everything except itself
+                  if(obj != otherObj)
                   {
                      if(obj.isColliding(otherObj))
                      {
@@ -305,10 +305,10 @@ public class PhysicsUnlockedEngine implements Runnable
                         if(!environmentList.contains(otherObj))
                            otherObj.movingCollisionOccured(new MovingCollision(otherObj, obj));
                      }
-                  } // release otherObj lock
+                  } 
                }
             }
-         } // release environment lock
+         } 
       } // end environment collisions
    }
    
