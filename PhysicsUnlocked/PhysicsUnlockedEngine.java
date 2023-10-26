@@ -124,8 +124,11 @@ public class PhysicsUnlockedEngine implements Runnable
             millisElapsed = (int)(curTime - lastTime);   // milliseconds since last execution
             if(millisElapsed > 0)  // no need to waste cycles if there will be no change
             {
-               doPhysics(millisElapsed);
-               doCollisionChecks();
+               synchronized(this)
+               {
+                  doPhysics(millisElapsed);
+                  doCollisionChecks();
+               }
                cyclesThisSecond++;
                
                // it's been a second, update cycles per second
