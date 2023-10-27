@@ -75,6 +75,11 @@ public class PhysicsUnlockedEngine implements Runnable
       thread.start();
    }
    
+   public void runUnthreaded()
+   {
+      terminate();
+   }
+   
    // add a moving object
    public void add(MovingBoundingObject obj){add(obj, ENVIRONMENT);}
    public void add(MovingBoundingObject obj, int list)
