@@ -36,6 +36,11 @@ public class PhysicsUnlockedEngine implements Runnable
    private int cps;
    private GeometryType[][] geometry;
    private Vector<MovingBoundingObject> removalList;
+   private long lastTime = System.currentTimeMillis();
+   private long curTime = lastTime;
+   private long lastSecond = lastTime;      // used for calculating cycles per second
+   private int cyclesThisSecond = 0;
+   private int millisElapsed = 0;
 
 
 	public double getGravity(){return gravity;}
@@ -108,43 +113,55 @@ public class PhysicsUnlockedEngine implements Runnable
       }
    }
    
+   public void doLoop()
+   {
+      if(lastTime == 0)
+      {
+         lastTime = System.currentTimeMillis();
+         curTime = lastTime;
+         lastSecond = lastTime;      // used for calculating cycles per second
+         cyclesThisSecond = 0;
+         millisElapsed = 0;
+      }
+      curTime = System.currentTimeMillis();
+      if(runFlag)
+      {
+         millisElapsed = (int)(curTime - lastTime);   // milliseconds since last execution
+         if(millisElapsed > 0)  // no need to waste cycles if there will be no change
+         {
+            synchronized(this)
+            {
+               doPhysics(millisElapsed);
+               doCollisionChecks();
+            }
+            cyclesThisSecond++;
+            
+            // it's been a second, update cycles per second
+            if(curTime - lastSecond >= 1000)
+            {
+               cps = cyclesThisSecond;
+               cyclesThisSecond = 0;
+               lastSecond = curTime;
+            }
+         }
+         clearRemovalList();
+      }
+      // notate for next loop
+      lastTime = curTime;
+   }
+   
    // called by thread.start()
    public void run()
    {
-      long lastTime = System.currentTimeMillis();
-      long curTime = lastTime;
-      long lastSecond = lastTime;      // used for calculating cycles per second
-      int cyclesThisSecond = 0;
-      int millisElapsed = 0;
+      lastTime = System.currentTimeMillis();
+      curTime = lastTime;
+      lastSecond = lastTime;      // used for calculating cycles per second
+      cyclesThisSecond = 0;
+      millisElapsed = 0;
       while(!terminateFlag)
       {
-         curTime = System.currentTimeMillis();
-         if(runFlag)
-         {
-            millisElapsed = (int)(curTime - lastTime);   // milliseconds since last execution
-            if(millisElapsed > 0)  // no need to waste cycles if there will be no change
-            {
-               synchronized(this)
-               {
-                  doPhysics(millisElapsed);
-                  doCollisionChecks();
-               }
-               cyclesThisSecond++;
-               
-               // it's been a second, update cycles per second
-               if(curTime - lastSecond >= 1000)
-               {
-                  cps = cyclesThisSecond;
-                  cyclesThisSecond = 0;
-                  lastSecond = curTime;
-               }
-            }
-            clearRemovalList();
-         }
-         // notate for next loop
-         lastTime = curTime;
-         // let someone else have a turn
-         Thread.yield();   
+         doLoop();
+         Thread.yield();   // let someone else have a turn
       }
    }
    
