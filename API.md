@@ -16,6 +16,8 @@ The engine can be paused with setRunFlag(), or terminated with terminate(). term
 
 It also keeps track of variables global to all the moving stuff; gravity and terminal velocity. If you're doing a side-on game you'll want to set these, if you're doing a top-down game you won't.
 
+The default behavior for PhysicsUnlockedEngine is to run on its own thread. If you want to run it manually, you can call runUnthreaded() and trigger updates by calling doLoop().
+
 ## MovingBoundingObject
 This is an abstract class for the stuff that can move. There are a number of variables here.
 
@@ -475,6 +477,12 @@ void setGeometry(GeometryType[][] g)<br>
 
 void setRunFlag(boolean rf)<br>
 *Setter for the run flag. If this is false, the engine will idle until it is turned back to true.*
+
+void runUnthreaded()<br>
+*Terminates the thread that triggers calculations. If you call this, you will need to manually trigger calculations with doLoop().*
+
+void doLoop()<br>
+*This is the function that does the work for each pass. This is automatically called internally, so you don't need to call it unless you are running unthreaded.*
 
 void terminate()<br>
 *This allows the engine thread to terminate.*
